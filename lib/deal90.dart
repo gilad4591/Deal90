@@ -1,3 +1,4 @@
+import 'package:finalproject/loginF/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
 class Deal90App extends StatelessWidget {
@@ -6,7 +7,7 @@ class Deal90App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.light(),
-      home: Scaffold(),
+      home: LoginPage(),
     );
   }
 }
