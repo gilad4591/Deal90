@@ -32,7 +32,6 @@ dependencies:
   flutter_signin_button: ^1.1.0
   dartz: ^0.9.1
   custom_navigator: ^0.3.0
-  shared_preferences: ^0.5.10
 
   # state management    
   provider: ^4.3.2+2

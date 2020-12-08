@@ -1,1 +1,0 @@
-final FIRST_LOGGED_IN = "FIRST_LOGGED_IN";
