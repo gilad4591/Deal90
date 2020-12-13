@@ -47,8 +47,8 @@ class Body extends StatelessWidget {
                       press: () {
                         signInWithGoogle().then((result) {
                           if (result != null) {
-                            Navigator.pushNamed(
-                                context, LoginSuccessScreen.routeName);
+                            Navigator.pushNamed(context,
+                                LoginSuccessScreen.routeName); //after login
                           }
                         });
                       },
