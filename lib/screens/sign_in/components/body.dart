@@ -1,10 +1,10 @@
+import 'package:finalproject/screens/login_success/login_success_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/components/no_account_text.dart';
 import 'package:finalproject/components/socal_card.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:finalproject/screens/home/home_screen.dart';
 import '../../../size_config.dart';
 import 'sign_form.dart';
 
@@ -47,7 +47,8 @@ class Body extends StatelessWidget {
                       press: () {
                         signInWithGoogle().then((result) {
                           if (result != null) {
-                            Navigator.pushNamed(context, HomeScreen.routeName);
+                            Navigator.pushNamed(
+                                context, LoginSuccessScreen.routeName);
                           }
                         });
                       },
