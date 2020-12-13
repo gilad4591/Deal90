@@ -1,8 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/components/no_account_text.dart';
 import 'package:finalproject/components/socal_card.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:finalproject/screens/home/home_screen.dart';
 import '../../../size_config.dart';
 import 'sign_form.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class Body extends StatelessWidget {
   @override
@@ -37,7 +44,13 @@ class Body extends StatelessWidget {
                   children: [
                     SocalCard(
                       icon: "assets/icons/google-icon.svg",
-                      press: () {},
+                      press: () {
+                        signInWithGoogle().then((result) {
+                          if (result != null) {
+                            Navigator.pushNamed(context, HomeScreen.routeName);
+                          }
+                        });
+                      },
                     ),
                     SocalCard(
                       icon: "assets/icons/facebook-2.svg",
@@ -57,5 +70,34 @@ class Body extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<String> signInWithGoogle() async {
+    await Firebase.initializeApp();
+
+    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+    final UserCredential authResult =
+        await _auth.signInWithCredential(credential);
+    final User user = authResult.user;
+    if (user != null) {
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+      final User currentUser = _auth.currentUser;
+      assert(user.uid == currentUser.uid);
+      print('signInWithGoogle succeeded: $user');
+      return '$user';
+    }
+    return null;
+  }
+
+  void signOutGoogle() async {
+    await googleSignIn.signOut();
+    print("User Signed Out");
   }
 }

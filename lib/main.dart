@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:finalproject/routes.dart';
 import 'package:finalproject/screens/splash/splash_screen.dart';
 import 'package:finalproject/theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() {
+  Firebase.initializeApp();
   runApp(MyApp());
 }
 
