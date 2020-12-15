@@ -22,6 +22,7 @@ class _SignUpFormState extends State<SignUpForm> {
   String password;
   String confirmPassword;
   bool remember = false;
+  var _isLoading = false;
   final List<String> errors = [];
 
   void _showErrorDialog(String message) {
@@ -57,15 +58,14 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   Future<void> _submit() async {
+    if (!(_formKey.currentState.validate())) {
+      return;
+    }
+    _formKey.currentState.save();
     try {
-      if (!(_formKey.currentState.validate())) {
-        return;
-      }
-      _formKey.currentState.save();
       await Provider.of<Auth>(context, listen: false).signup(email, password);
       // if all are valid then go to success screen
-      Navigator.pushNamed(context, CompleteProfileScreen.routeName);
-    } catch (error) {
+    } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
       if (error.toString().contains('EMAIL_EXISTS')) {
         errorMessage = 'This email address is already in use.';
@@ -79,11 +79,12 @@ class _SignUpFormState extends State<SignUpForm> {
         errorMessage = 'Invalid password.';
       }
       _showErrorDialog(errorMessage);
-    // } catch (error) {
-    //   const errorMessage =
-    //       'Could not authenticate you. Please try again later.';
-    //   _showErrorDialog(errorMessage);
-    // }
+    } catch (error) {
+      const errorMessage =
+          'Could not authenticate you. Please try again later.';
+      _showErrorDialog(errorMessage);
+    }
+    //Navigator.pushNamed(context, CompleteProfileScreen.routeName);
   }
 
   @override
@@ -96,7 +97,7 @@ class _SignUpFormState extends State<SignUpForm> {
           SizedBox(height: getProportionateScreenHeight(30)),
           buildPasswordFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          buildConformPassFormField(),
+          buildConfirmPassFormField(),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(40)),
           DefaultButton(
@@ -109,7 +110,7 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
-  TextFormField buildConformPassFormField() {
+  TextFormField buildConfirmPassFormField() {
     return TextFormField(
       obscureText: true,
       onSaved: (newValue) => confirmPassword = newValue,
@@ -134,8 +135,6 @@ class _SignUpFormState extends State<SignUpForm> {
       decoration: InputDecoration(
         labelText: "Confirm Password",
         hintText: "Re-enter your password",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
@@ -200,8 +199,6 @@ class _SignUpFormState extends State<SignUpForm> {
       decoration: InputDecoration(
         labelText: "Email",
         hintText: "Enter your email",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
       ),
