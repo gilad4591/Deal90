@@ -1,8 +1,10 @@
+import 'package:finalproject/models/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/components/custom_surfix_icon.dart';
 import 'package:finalproject/components/form_error.dart';
 import 'package:finalproject/screens/forgot_password/forgot_password_screen.dart';
 import 'package:finalproject/screens/login_success/login_success_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
@@ -15,6 +17,10 @@ class SignForm extends StatefulWidget {
 
 class _SignFormState extends State<SignForm> {
   final _formKey = GlobalKey<FormState>();
+  Map<String, String> _authData = {
+    'email': '',
+    'password': '',
+  };
   String email;
   String password;
   bool remember = false;
@@ -32,6 +38,16 @@ class _SignFormState extends State<SignForm> {
       setState(() {
         errors.remove(error);
       });
+  }
+
+  Future<void> _submit() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      await Provider.of<Auth>(context, listen: false)
+          .login(_authData['email'], _authData['password']);
+      // if all are valid then go to success screen
+      Navigator.pushNamed(context, LoginSuccessScreen.routeName);
+    }
   }
 
   @override
@@ -72,11 +88,7 @@ class _SignFormState extends State<SignForm> {
           DefaultButton(
             text: "Continue",
             press: () {
-              if (_formKey.currentState.validate()) {
-                _formKey.currentState.save();
-                // if all are valid then go to success screen
-                Navigator.pushNamed(context, LoginSuccessScreen.routeName);
-              }
+              _submit();
             },
           ),
         ],
@@ -87,7 +99,7 @@ class _SignFormState extends State<SignForm> {
   TextFormField buildPasswordFormField() {
     return TextFormField(
       obscureText: true,
-      onSaved: (newValue) => password = newValue,
+      onSaved: (newValue) => _authData['password'] = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kPassNullError);
@@ -120,7 +132,7 @@ class _SignFormState extends State<SignForm> {
   TextFormField buildEmailFormField() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
-      onSaved: (newValue) => email = newValue,
+      onSaved: (newValue) => _authData['email'] = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kEmailNullError);

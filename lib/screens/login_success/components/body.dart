@@ -44,6 +44,6 @@ class Body extends StatelessWidget {
   String displayNameGoogleSignIn() {
     return (googleSignIn.currentUser != null
         ? googleSignIn.currentUser.displayName
-        : null);
+        : '');
   }
 }
