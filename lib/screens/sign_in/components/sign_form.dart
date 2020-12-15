@@ -5,7 +5,6 @@ import 'package:finalproject/components/form_error.dart';
 import 'package:finalproject/screens/forgot_password/forgot_password_screen.dart';
 import 'package:finalproject/screens/login_success/login_success_screen.dart';
 import 'package:provider/provider.dart';
-
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
@@ -17,10 +16,6 @@ class SignForm extends StatefulWidget {
 
 class _SignFormState extends State<SignForm> {
   final _formKey = GlobalKey<FormState>();
-  Map<String, String> _authData = {
-    'email': '',
-    'password': '',
-  };
   String email;
   String password;
   bool remember = false;
@@ -43,8 +38,7 @@ class _SignFormState extends State<SignForm> {
   Future<void> _submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      await Provider.of<Auth>(context, listen: false)
-          .login(_authData['email'], _authData['password']);
+      await Provider.of<Auth>(context, listen: false).login(email, password);
       // if all are valid then go to success screen
       Navigator.pushNamed(context, LoginSuccessScreen.routeName);
     }
@@ -99,7 +93,7 @@ class _SignFormState extends State<SignForm> {
   TextFormField buildPasswordFormField() {
     return TextFormField(
       obscureText: true,
-      onSaved: (newValue) => _authData['password'] = newValue,
+      onSaved: (newValue) => password = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kPassNullError);
@@ -132,7 +126,7 @@ class _SignFormState extends State<SignForm> {
   TextFormField buildEmailFormField() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
-      onSaved: (newValue) => _authData['email'] = newValue,
+      onSaved: (newValue) => email = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kEmailNullError);

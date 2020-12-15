@@ -5,6 +5,7 @@ import 'package:finalproject/components/default_button.dart';
 import 'package:finalproject/components/form_error.dart';
 import 'package:finalproject/screens/complete_profile/complete_profile_screen.dart';
 import 'package:provider/provider.dart';
+import '../../../models/http_exception.dart';
 
 import '../../../constants.dart';
 import '../../../size_config.dart';
@@ -21,11 +22,25 @@ class _SignUpFormState extends State<SignUpForm> {
   String password;
   String confirmPassword;
   bool remember = false;
-  Map<String, String> _authData = {
-    'email': '',
-    'password': '',
-  };
   final List<String> errors = [];
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
 
   void addError({String error}) {
     if (!errors.contains(error))
@@ -42,13 +57,33 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   Future<void> _submit() async {
-    if (_formKey.currentState.validate()) {
+    try {
+      if (!(_formKey.currentState.validate())) {
+        return;
+      }
       _formKey.currentState.save();
-      await Provider.of<Auth>(context, listen: false)
-          .signup(_authData['email'], _authData['password']);
+      await Provider.of<Auth>(context, listen: false).signup(email, password);
       // if all are valid then go to success screen
       Navigator.pushNamed(context, CompleteProfileScreen.routeName);
-    }
+    } catch (error) {
+      var errorMessage = 'Authentication failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address is already in use.';
+      } else if (error.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'This is not a valid email address';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'This password is too weak.';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could not find a user with that email.';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid password.';
+      }
+      _showErrorDialog(errorMessage);
+    // } catch (error) {
+    //   const errorMessage =
+    //       'Could not authenticate you. Please try again later.';
+    //   _showErrorDialog(errorMessage);
+    // }
   }
 
   @override
@@ -110,7 +145,7 @@ class _SignUpFormState extends State<SignUpForm> {
   TextFormField buildPasswordFormField() {
     return TextFormField(
       obscureText: true,
-      onSaved: (newValue) => _authData['password'] = newValue,
+      onSaved: (newValue) => password = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kPassNullError);
@@ -143,7 +178,7 @@ class _SignUpFormState extends State<SignUpForm> {
   TextFormField buildEmailFormField() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
-      onSaved: (newValue) => _authData['email'] = newValue,
+      onSaved: (newValue) => email = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kEmailNullError);
