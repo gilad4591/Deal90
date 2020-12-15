@@ -1,9 +1,8 @@
+import 'package:finalproject/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/components/custom_surfix_icon.dart';
 import 'package:finalproject/components/default_button.dart';
 import 'package:finalproject/components/form_error.dart';
-import 'package:finalproject/screens/otp/otp_screen.dart';
-
 import '../../../constants.dart';
 import '../../../size_config.dart';
 
@@ -53,7 +52,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
             text: "continue",
             press: () {
               if (_formKey.currentState.validate()) {
-                Navigator.pushNamed(context, OtpScreen.routeName);
+                Navigator.pushNamed(context, HomeScreen.routeName);
               }
             },
           ),

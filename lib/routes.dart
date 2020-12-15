@@ -8,7 +8,6 @@ import 'package:finalproject/screens/login_success/login_success_screen.dart';
 import 'package:finalproject/screens/otp/otp_screen.dart';
 import 'package:finalproject/screens/sign_in/sign_in_screen.dart';
 import 'package:finalproject/screens/splash/splash_screen.dart';
-
 import 'screens/sign_up/sign_up_screen.dart';
 
 // We use name route

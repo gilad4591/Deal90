@@ -1,8 +1,10 @@
+import 'package:finalproject/models/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/components/custom_surfix_icon.dart';
 import 'package:finalproject/components/default_button.dart';
 import 'package:finalproject/components/form_error.dart';
 import 'package:finalproject/screens/complete_profile/complete_profile_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 import '../../../size_config.dart';
@@ -15,9 +17,14 @@ class SignUpForm extends StatefulWidget {
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
   String email;
+  //var _isLoading = false;
   String password;
   String confirmPassword;
   bool remember = false;
+  Map<String, String> _authData = {
+    'email': '',
+    'password': '',
+  };
   final List<String> errors = [];
 
   void addError({String error}) {
@@ -34,6 +41,16 @@ class _SignUpFormState extends State<SignUpForm> {
       });
   }
 
+  Future<void> _submit() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      await Provider.of<Auth>(context, listen: false)
+          .signup(_authData['email'], _authData['password']);
+      // if all are valid then go to success screen
+      Navigator.pushNamed(context, CompleteProfileScreen.routeName);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -48,15 +65,10 @@ class _SignUpFormState extends State<SignUpForm> {
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(40)),
           DefaultButton(
-            text: "Continue",
-            press: () {
-              if (_formKey.currentState.validate()) {
-                _formKey.currentState.save();
-                // if all are valid then go to success screen
-                Navigator.pushNamed(context, CompleteProfileScreen.routeName);
-              }
-            },
-          ),
+              text: "Continue",
+              press: () {
+                _submit();
+              }),
         ],
       ),
     );
@@ -98,7 +110,7 @@ class _SignUpFormState extends State<SignUpForm> {
   TextFormField buildPasswordFormField() {
     return TextFormField(
       obscureText: true,
-      onSaved: (newValue) => password = newValue,
+      onSaved: (newValue) => _authData['password'] = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kPassNullError);
@@ -131,7 +143,7 @@ class _SignUpFormState extends State<SignUpForm> {
   TextFormField buildEmailFormField() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
-      onSaved: (newValue) => email = newValue,
+      onSaved: (newValue) => _authData['email'] = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kEmailNullError);
