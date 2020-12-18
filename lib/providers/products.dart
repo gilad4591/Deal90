@@ -5,7 +5,7 @@ class Products with ChangeNotifier {
   List<Product> _items = [
     Product(
       id: 'p1',
-      title: 'photographer',
+      title: 'Photographer',
       description: '2 image photographers, 1 video',
       imageUrl:
           'https://rationalbelief.org.il/wp-content/uploads/2019/01/photographer-3672010__340.jpg',
