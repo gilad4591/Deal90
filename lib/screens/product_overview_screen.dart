@@ -1,44 +1,49 @@
+import 'package:finalproject/widgets/products_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/product.dart';
-import '../widgets/product_item.dart';
 
-class ProductOveviewScreen extends StatelessWidget {
+enum FilterOptions {
+  Favorites,
+  All,
+}
+
+class ProductOveviewScreen extends StatefulWidget {
+  @override
+  _ProductOveviewScreenState createState() => _ProductOveviewScreenState();
+}
+
+class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
   final dateFormatter = DateFormat('dd-MM-yyyy');
-  final List<Product> loadedProduct = [
-    Product(
-      id: 'p1',
-      title: 'photographer',
-      description: '2 image photographers, 1 video',
-      imageUrl:
-          'https://rationalbelief.org.il/wp-content/uploads/2019/01/photographer-3672010__340.jpg',
-      price: 1500,
-      date: "1.1.2020",
-    )
-  ];
-
+  var _showOnlyFavorites = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Deal90')),
+        title: Text('Deal90'),
+        actions: <Widget>[
+          PopupMenuButton(
+            onSelected: (FilterOptions selectedValue) {
+              setState(() {
+                if (selectedValue == FilterOptions.Favorites) {
+                  _showOnlyFavorites = true;
+                } else {
+                  _showOnlyFavorites = false;
+                }
+              });
+            },
+            icon: Icon(
+              Icons.more_vert,
+            ),
+            itemBuilder: (_) => [
+              PopupMenuItem(
+                  child: Text('Only Favorites'),
+                  value: FilterOptions.Favorites),
+              PopupMenuItem(child: Text('Show All'), value: FilterOptions.All),
+            ],
+          )
+        ],
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(10.0),
-        itemCount: loadedProduct.length,
-        itemBuilder: (ctx, i) => ProductItem(
-          loadedProduct[i].id,
-          loadedProduct[i].title,
-          loadedProduct[i].price,
-          loadedProduct[i].imageUrl,
-        ),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-      ),
+      body: ProductsGrid(_showOnlyFavorites),
     );
   }
 }
