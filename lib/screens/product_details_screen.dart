@@ -28,7 +28,7 @@ class ProductDetailsScreen extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              '\$${loadedProduct.dealPrice}',
+              '${loadedProduct.dealPrice} NIS',
               style: TextStyle(color: Colors.grey, fontSize: 20),
             ),
             SizedBox(

@@ -23,6 +23,16 @@ class Products with ChangeNotifier {
       dealPrice: 2000,
       date: "1.1.2020",
     ),
+    Product(
+      id: 'p3',
+      title: 'Make up',
+      description: 'make up for bride',
+      imageUrl:
+          'https://www.bps.org.uk/sites/www.bps.org.uk/files/News/News%20-%20Images/Makeup.jpg',
+      originalPrice: 2400,
+      dealPrice: 1800,
+      date: "1.1.2020",
+    ),
   ];
 
   List<Product> get items {
@@ -33,8 +43,17 @@ class Products with ChangeNotifier {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
-  void addProduct() {
-    //_items.add(value);
+  void addProduct(Product product) {
+    final newProduct = Product(
+      title: product.title,
+      dealPrice: product.dealPrice,
+      originalPrice: product.originalPrice,
+      description: product.description,
+      date: product.date,
+      imageUrl: product.imageUrl,
+      id: DateTime.now().toString(),
+    );
+    _items.add(newProduct);
     notifyListeners();
   }
 
