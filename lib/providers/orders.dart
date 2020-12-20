@@ -30,6 +30,7 @@ class Orders with ChangeNotifier {
         id: DateTime.now().toString(),
         amount: total,
         dateTime: DateTime.now().add(Duration(hours: 2)),
+        products: cartProuducts,
       ),
     );
     notifyListeners();
