@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../providers/cart.dart';
 import '../screens/cart_screen.dart';
 import '../widgets/app_drawer.dart';
+import '../providers/products.dart';
 
 enum FilterOptions {
   Favorites,
@@ -21,6 +22,35 @@ class ProductOveviewScreen extends StatefulWidget {
 class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
   final dateFormatter = DateFormat('dd-MM-yyyy');
   var _showOnlyFavorites = false;
+  var _isInit = true;
+  var _isLoading = false;
+
+  @override
+  void initState() {
+    // Provider.of<Products>(context).fetchAndSetProducts();
+    super.initState();
+  }
+
+  Future<void> _refreshProducts(BuildContext context) async {
+    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +95,14 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showOnlyFavorites),
+      body: RefreshIndicator(
+        onRefresh: () => _refreshProducts(context),
+        child: _isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ProductsGrid(_showOnlyFavorites),
+      ),
     );
   }
 }
