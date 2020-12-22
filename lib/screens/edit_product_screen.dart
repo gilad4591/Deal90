@@ -27,6 +27,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
       description: '',
       imageUrl: '',
       date: '');
+  var _isInit = true;
+  var _initValues = {
+    'title': '',
+    'originalPrice': '',
+    'dealPrice': '',
+    'description': '',
+    'imageUrl': '',
+    'date': ''
+  };
 
   @override
   void dispose() {
@@ -47,6 +56,31 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context).settings.arguments as String;
+      // check if exsist a product/ deal:
+      if (productId != null) {
+        _editedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        _initValues = {
+          'title': _editedProduct.title,
+          'originalPrice': _editedProduct.originalPrice.toString(),
+          'dealPrice': _editedProduct.dealPrice.toString(),
+          'description': _editedProduct.description,
+          //'imageUrl': _editedProduct.imageUrl,
+          'imageUrl': '',
+          'date': _editedProduct.date,
+        };
+        _imageUrlController.text = _editedProduct
+            .imageUrl; // We used string because Textfield accept only Strings
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
       setState(() {});
@@ -59,6 +93,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _form.currentState.save();
+    if (_editedProduct.id != null) {
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
+    } else {
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    }
+    Navigator.of(context).pop();
     setState(() {
       _isLoading = true;
     });
@@ -113,6 +154,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   child: Column(
                     children: <Widget>[
                       TextFormField(
+                        initialValue: _initValues['title'],
                         decoration: InputDecoration(labelText: 'Title'),
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (_) {
@@ -128,7 +170,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         onSaved: (value) {
                           _editedProduct = Product(
                               title: value,
-                              id: null,
+                              id: _editedProduct.id,
                               description: _editedProduct.description,
                               originalPrice: _editedProduct.originalPrice,
                               dealPrice: _editedProduct.dealPrice,
@@ -137,6 +179,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         },
                       ),
                       TextFormField(
+                        initialValue: _initValues['Original Price'],
                         decoration:
                             InputDecoration(labelText: 'Original Price'),
                         textInputAction: TextInputAction.next,
@@ -149,7 +192,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         onSaved: (value) {
                           _editedProduct = Product(
                               title: _editedProduct.title,
-                              id: null,
+                              id: _editedProduct.id,
                               description: _editedProduct.description,
                               originalPrice: double.parse(value),
                               dealPrice: _editedProduct.dealPrice,
@@ -170,6 +213,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         },
                       ),
                       TextFormField(
+                        initialValue: _initValues['Deal 90 Price'],
                         decoration: InputDecoration(labelText: 'Deal 90 Price'),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
@@ -180,7 +224,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         onSaved: (value) {
                           _editedProduct = Product(
                               title: _editedProduct.title,
-                              id: null,
+                              id: _editedProduct.id,
                               description: _editedProduct.description,
                               originalPrice: _editedProduct.originalPrice,
                               dealPrice: double.parse(value),
@@ -201,6 +245,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         },
                       ),
                       TextFormField(
+                        initialValue: _initValues['Date'],
                         decoration: InputDecoration(labelText: 'Date'),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.datetime,
@@ -212,7 +257,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         onSaved: (value) {
                           _editedProduct = Product(
                               title: _editedProduct.title,
-                              id: null,
+                              id: _editedProduct.id,
                               description: _editedProduct.description,
                               originalPrice: _editedProduct.originalPrice,
                               dealPrice: _editedProduct.dealPrice,
@@ -229,6 +274,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
                       //_dateFocusNode
                       TextFormField(
+                        initialValue: _initValues['Description'],
                         decoration: InputDecoration(labelText: 'Description'),
                         maxLines: 3,
                         textInputAction: TextInputAction.next,
@@ -237,7 +283,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         onSaved: (value) {
                           _editedProduct = Product(
                               title: _editedProduct.title,
-                              id: null,
+                              id: _editedProduct.id,
                               description: value,
                               originalPrice: _editedProduct.originalPrice,
                               dealPrice: _editedProduct.dealPrice,
@@ -292,7 +338,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               onSaved: (value) {
                                 _editedProduct = Product(
                                     title: _editedProduct.title,
-                                    id: null,
+                                    id: _editedProduct.id,
                                     description: _editedProduct.description,
                                     originalPrice: _editedProduct.originalPrice,
                                     dealPrice: _editedProduct.dealPrice,
