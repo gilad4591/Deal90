@@ -20,8 +20,10 @@ class Products with ChangeNotifier {
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null) {
+        return;
+      }
       final List<Product> loadedProducts = [];
-      if (extractedData != null) {}
       extractedData.forEach((productId, productData) {
         loadedProducts.add(Product(
           id: productId,
@@ -78,9 +80,20 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  void updateProduct(String id, Product newProduct) {
+  Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
-    if (prodIndex > 0) {
+    if (prodIndex >= 0) {
+      final url =
+          'https://finalproject-52a7e-default-rtdb.firebaseio.com/products/$id.json';
+      await http.patch(url,
+          body: json.encode({
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'imageUrl': newProduct.imageUrl,
+            'originalPrice': newProduct.originalPrice,
+            'dealPrice': newProduct.dealPrice,
+            'date': newProduct.date,
+          }));
       _items[prodIndex] = newProduct;
       notifyListeners();
     } else {

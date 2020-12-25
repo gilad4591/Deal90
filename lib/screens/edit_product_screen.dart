@@ -69,7 +69,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
           'originalPrice': _editedProduct.originalPrice.toString(),
           'dealPrice': _editedProduct.dealPrice.toString(),
           'description': _editedProduct.description,
-          //'imageUrl': _editedProduct.imageUrl,
           'imageUrl': '',
           'date': _editedProduct.date,
         };
@@ -83,6 +82,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      if ((!_imageUrlController.text.startsWith('http') &&
+              !_imageUrlController.text.startsWith('https')) ||
+          (!_imageUrlController.text.endsWith('.png') &&
+              !_imageUrlController.text.endsWith('.jpg') &&
+              !_imageUrlController.text.endsWith('.jpeg'))) {
+        return;
+      }
       setState(() {});
     }
   }
@@ -94,40 +100,34 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     _form.currentState.save();
     if (_editedProduct.id != null) {
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
     } else {
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      } catch (error) {
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error occurred!'),
+            content: Text('Something went wrong.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Okay'),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              )
+            ],
+          ),
+        );
+      }
     }
-    Navigator.of(context).pop();
     setState(() {
-      _isLoading = true;
+      _isLoading = false;
     });
-    try {
-      await Provider.of<Products>(context, listen: false)
-          .addProduct(_editedProduct);
-    } catch (error) {
-      await showDialog<Null>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text('An error occured'),
-          content: Text('Something went wrong'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('ok'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
-          ],
-        ),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pop();
-    }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -179,7 +179,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         },
                       ),
                       TextFormField(
-                        initialValue: _initValues['Original Price'],
+                        initialValue: _initValues['originalPrice'],
                         decoration:
                             InputDecoration(labelText: 'Original Price'),
                         textInputAction: TextInputAction.next,
@@ -213,7 +213,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         },
                       ),
                       TextFormField(
-                        initialValue: _initValues['Deal 90 Price'],
+                        initialValue: _initValues['dealPrice'],
                         decoration: InputDecoration(labelText: 'Deal 90 Price'),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
@@ -245,7 +245,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         },
                       ),
                       TextFormField(
-                        initialValue: _initValues['Date'],
+                        initialValue: _initValues['date'],
                         decoration: InputDecoration(labelText: 'Date'),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.datetime,
@@ -274,7 +274,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
                       //_dateFocusNode
                       TextFormField(
-                        initialValue: _initValues['Description'],
+                        initialValue: _initValues['description'],
                         decoration: InputDecoration(labelText: 'Description'),
                         maxLines: 3,
                         textInputAction: TextInputAction.next,
