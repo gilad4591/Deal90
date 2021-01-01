@@ -37,39 +37,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  FlatButton(
-                    child: Text('ORDER NOW'),
-                    onPressed: () {
-                      if (cart.itemCount > 0) {
-                        Provider.of<Orders>(context, listen: false).addOrder(
-                          cart.items.values.toList(),
-                          cart.totalAmount,
-                        );
-                        cart.clear();
-                      } else {
-                        Widget okButton = FlatButton(
-                          child: Text("OK"),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        );
-                        AlertDialog alert = AlertDialog(
-                          title: Text("Error"),
-                          content: Text("No items in the cart."),
-                          actions: [
-                            okButton,
-                          ],
-                        );
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return alert;
-                          },
-                        );
-                      }
-                    },
-                    textColor: Theme.of(context).primaryColor,
-                  ),
+                  OrderButton(cart: cart),
                 ],
               ),
             ),
@@ -88,6 +56,62 @@ class CartScreen extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: _isLoading ? CircularProgressIndicator() : Text('ORDER NOW'),
+      onPressed: () async {
+        if (widget.cart.itemCount > 0 || _isLoading) {
+          setState(() {
+            _isLoading = true;
+          });
+          await Provider.of<Orders>(context, listen: false).addOrder(
+            widget.cart.items.values.toList(),
+            widget.cart.totalAmount,
+          );
+          widget.cart.clear();
+          _isLoading = false;
+        } else {
+          Widget okButton = FlatButton(
+            child: Text("OK"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          );
+          AlertDialog alert = AlertDialog(
+            title: Text("Error"),
+            content: Text("No items in the cart."),
+            actions: [
+              okButton,
+            ],
+          );
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return alert;
+            },
+          );
+        }
+      },
+      textColor: Theme.of(context).primaryColor,
     );
   }
 }
