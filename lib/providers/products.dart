@@ -45,6 +45,7 @@ class Products with ChangeNotifier {
             originalPrice: productData['originalPrice'],
             dealPrice: productData['dealPrice'],
             date: productData['date'],
+            creatorId: productData['creatorId'],
             isFavorite:
                 favoriteData == null ? false : favoriteData[productId] ?? false,
           ),

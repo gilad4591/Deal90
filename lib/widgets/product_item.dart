@@ -1,5 +1,6 @@
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/providers/product.dart';
+import 'package:finalproject/providers/products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../screens/product_details_screen.dart';
@@ -68,19 +69,41 @@ class ProductItem extends StatelessWidget {
               Icons.shopping_cart,
             ),
             onPressed: () {
-              cart.addItem(product.id, product.dealPrice, product.title);
-              Scaffold.of(context).hideCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Item added to cart'),
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {
-                      cart.removeItem(product.id);
-                    },
+              if (product.creatorId != authData.userId) {
+                cart.addItem(product.id, product.dealPrice, product.title);
+                Scaffold.of(context).hideCurrentSnackBar();
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Item added to cart'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        cart.removeItem(product.id);
+                      },
+                    ),
                   ),
-                ),
-              );
+                );
+              } else {
+                Widget okButton = FlatButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                );
+                AlertDialog alert = AlertDialog(
+                  title: Text("Error"),
+                  content: Text("You cannot add your own product to the cart."),
+                  actions: [
+                    okButton,
+                  ],
+                );
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alert;
+                  },
+                );
+              }
             },
             color: Theme.of(context).accentColor,
           ),

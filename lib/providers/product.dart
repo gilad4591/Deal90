@@ -11,6 +11,7 @@ class Product with ChangeNotifier {
   final String imageUrl;
   final String date;
   bool isFavorite;
+  final String creatorId;
 
   Product({
     @required this.id,
@@ -21,6 +22,7 @@ class Product with ChangeNotifier {
     @required this.date,
     @required this.imageUrl,
     this.isFavorite = false,
+    this.creatorId,
   });
 
   void _setFavValue(bool newValue) {
