@@ -30,12 +30,17 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchAndSetOrders() async {
+    print(userId);
     final url =
         'https://finalproject-52a7e-default-rtdb.firebaseio.com/orders/$userId.json?auth=$authToken';
-    final response = await http.get(url);
+    var response = await http.get(url);
+    // print(url);
     final List<OrderItem> loadedOrders = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    print(extractedData);
     if (extractedData == null) {
+      _orders = loadedOrders;
+      notifyListeners();
       return;
     }
     extractedData.forEach((orderId, orderData) {
