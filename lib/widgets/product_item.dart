@@ -1,6 +1,6 @@
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/providers/product.dart';
-import 'package:finalproject/providers/products.dart';
+// import 'package:finalproject/providers/products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../screens/product_details_screen.dart';
@@ -71,7 +71,9 @@ class ProductItem extends StatelessWidget {
             onPressed: () {
               if (product.creatorId != authData.userId) {
                 cart.addItem(product.id, product.dealPrice, product.title);
+                // ignore: deprecated_member_use
                 Scaffold.of(context).hideCurrentSnackBar();
+                // ignore: deprecated_member_use
                 Scaffold.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Item added to cart'),
