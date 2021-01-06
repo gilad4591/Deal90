@@ -28,17 +28,32 @@ class ProductDetailsScreen extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              '${loadedProduct.dealPrice} NIS',
+              'Price: ${loadedProduct.dealPrice} NIS',
+              style: TextStyle(color: Colors.grey, fontSize: 20),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Date: ${loadedProduct.date}',
               style: TextStyle(color: Colors.grey, fontSize: 20),
             ),
             SizedBox(
               height: 10,
             ),
+            Text(
+              'More details:',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 20,
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               child: Text(
-                loadedProduct.description,
+                '${loadedProduct.description}',
                 textAlign: TextAlign.center,
                 softWrap: true,
               ),

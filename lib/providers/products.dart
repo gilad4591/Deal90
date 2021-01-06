@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 class Products with ChangeNotifier {
   List<Product> _items = [];
 
@@ -35,22 +37,31 @@ class Products with ChangeNotifier {
       final favoriteResponse = await http.get(url);
       final favoriteData = json.decode(favoriteResponse.body);
       final List<Product> loadedProducts = [];
-      extractedData.forEach((productId, productData) {
-        loadedProducts.add(
-          Product(
-            id: productId,
-            title: productData['title'],
-            description: productData['description'],
-            imageUrl: productData['imageUrl'],
-            originalPrice: productData['originalPrice'],
-            dealPrice: productData['dealPrice'],
-            date: productData['date'],
-            creatorId: productData['creatorId'],
-            isFavorite:
-                favoriteData == null ? false : favoriteData[productId] ?? false,
-          ),
-        );
-      });
+      //var nowTime = new DateTime.now();
+      extractedData.forEach(
+        (productId, productData) {
+          //DateTime productDateTime =
+          //  new DateFormat("dd/mm/yy").parse(productData['date']);
+          //if (productDateTime.isAfter(nowTime) == true) {  - needs to be fixed
+          //print("product added");
+          loadedProducts.add(
+            Product(
+              id: productId,
+              title: productData['title'],
+              description: productData['description'],
+              imageUrl: productData['imageUrl'],
+              originalPrice: productData['originalPrice'],
+              dealPrice: productData['dealPrice'],
+              date: productData['date'],
+              creatorId: productData['creatorId'],
+              isFavorite: favoriteData == null
+                  ? false
+                  : favoriteData[productId] ?? false,
+            ),
+          );
+          //}
+        },
+      );
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
