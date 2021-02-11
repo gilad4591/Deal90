@@ -1,6 +1,5 @@
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/providers/product.dart';
-// import 'package:finalproject/providers/products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../screens/product_details_screen.dart';
@@ -22,8 +21,9 @@ class ProductItem extends StatelessWidget {
               arguments: product.id,
             );
           },
-          child: Image.network(
-            product.imageUrl,
+          child: FadeInImage(
+            placeholder: AssetImage('assets/images/dealPlaceHolder.jpg'),
+            image: NetworkImage(product.imageUrl),
             fit: BoxFit.cover,
           ),
         ),
