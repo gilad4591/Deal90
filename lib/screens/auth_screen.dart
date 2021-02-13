@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/models/http_exception.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -94,6 +95,7 @@ class AuthCard extends StatefulWidget {
 class _AuthCardState extends State<AuthCard>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
+
   AuthMode _authMode = AuthMode.Login;
   Map<String, String> _authData = {
     'email': '',
@@ -178,6 +180,15 @@ class _AuthCardState extends State<AuthCard>
           _authData['email'],
           _authData['password'],
         );
+        final auth = Provider.of<Auth>(context, listen: false);
+        await Firestore.instance
+            .collection('users')
+            .document(auth.userId)
+            .setData({
+          'email': _authData['email'],
+          'city': ' ',
+          'date': ' ',
+        });
       }
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
