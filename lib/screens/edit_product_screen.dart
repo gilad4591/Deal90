@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/providers/product.dart';
 import 'package:finalproject/providers/products.dart';
@@ -13,12 +14,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
   //final RegExp dateRegExp = new RegExp(r"/^");
   var _isLoading = false;
   final _originalPriceFocusNode = FocusNode();
+  final _categoryFocusNode = FocusNode();
   final _deal90PriceFocusNode = FocusNode();
   final _dateFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
+  final _openDropDownProgKey = GlobalKey<DropdownSearchState<String>>();
+  String categoryDeal;
+  List<String> categories = ["music", "photography", "makeup", "other"];
   var _editedProduct = Product(
       id: null,
       title: '',
@@ -26,7 +31,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       dealPrice: 0,
       description: '',
       imageUrl: '',
-      date: '');
+      date: '',
+      category: '');
   var _isInit = true;
   var _initValues = {
     'title': '',
@@ -34,7 +40,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
     'dealPrice': '',
     'description': '',
     'imageUrl': '',
-    'date': ''
+    'date': '',
+    'category': '',
   };
 
   @override
@@ -45,6 +52,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _descriptionFocusNode.dispose();
     _imageUrlController.dispose();
     _dateFocusNode.dispose();
+    _categoryFocusNode.dispose();
     _imageUrlFocusNode.dispose();
     super.dispose();
   }
@@ -60,7 +68,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       final productId = ModalRoute.of(context).settings.arguments as String;
-      // check if exsist a product/ deal:
+      // check if deal exists
       if (productId != null) {
         _editedProduct =
             Provider.of<Products>(context, listen: false).findById(productId);
@@ -71,6 +79,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           'description': _editedProduct.description,
           'imageUrl': '',
           'date': _editedProduct.date,
+          'category': _editedProduct.category,
         };
         _imageUrlController.text = _editedProduct
             .imageUrl; // We used string because Textfield accept only Strings
@@ -175,8 +184,43 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               originalPrice: _editedProduct.originalPrice,
                               dealPrice: _editedProduct.dealPrice,
                               imageUrl: _editedProduct.imageUrl,
-                              date: _editedProduct.date);
+                              date: _editedProduct.date,
+                              category: _editedProduct.category);
                         },
+                      ),
+                      //category dropdown combobox
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                        child: Column(
+                          //crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            DropdownSearch<String>(
+                              validator: (v) =>
+                                  v == null ? "required field" : null,
+                              hint: "Select a category",
+                              mode: Mode.MENU,
+                              showSelectedItem: true,
+                              items: categories,
+                              label: "Category",
+                              showClearButton: true,
+                              onChanged: print,
+                              onSaved: (value) {
+                                _editedProduct = Product(
+                                    title: _editedProduct.title,
+                                    id: _editedProduct.id,
+                                    description: _editedProduct.description,
+                                    originalPrice: _editedProduct.originalPrice,
+                                    dealPrice: _editedProduct.dealPrice,
+                                    imageUrl: _editedProduct.imageUrl,
+                                    date: _editedProduct.date,
+                                    category: value);
+                              },
+                              popupItemDisabled: (String s) =>
+                                  s.startsWith('I'),
+                              selectedItem: _initValues['category'],
+                            ),
+                          ],
+                        ),
                       ),
                       TextFormField(
                         initialValue: _initValues['originalPrice'],
@@ -197,7 +241,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               originalPrice: double.parse(value),
                               dealPrice: _editedProduct.dealPrice,
                               imageUrl: _editedProduct.imageUrl,
-                              date: _editedProduct.date);
+                              date: _editedProduct.date,
+                              category: _editedProduct.category);
                         },
                         validator: (value) {
                           if (value.isEmpty) {
@@ -229,7 +274,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               originalPrice: _editedProduct.originalPrice,
                               dealPrice: double.parse(value),
                               imageUrl: _editedProduct.imageUrl,
-                              date: _editedProduct.date);
+                              date: _editedProduct.date,
+                              category: _editedProduct.category);
                         },
                         validator: (value) {
                           if (value.isEmpty) {
@@ -262,7 +308,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               originalPrice: _editedProduct.originalPrice,
                               dealPrice: _editedProduct.dealPrice,
                               imageUrl: _editedProduct.imageUrl,
-                              date: value);
+                              date: value,
+                              category: _editedProduct.category);
                         },
                         validator: (value) {
                           if (value.isEmpty) {
@@ -288,7 +335,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               originalPrice: _editedProduct.originalPrice,
                               dealPrice: _editedProduct.dealPrice,
                               imageUrl: _editedProduct.imageUrl,
-                              date: _editedProduct.date);
+                              date: _editedProduct.date,
+                              category: _editedProduct.category);
                         },
                         validator: (value) {
                           if (value.isEmpty) {
@@ -314,7 +362,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               ),
                             ),
                             child: _imageUrlController.text.isEmpty
-                                ? Text('Enter a Url')
+                                ? FittedBox(
+                                    child: Image.network(
+                                      "https://kubalubra.is/wp-content/uploads/2017/11/default-thumbnail.jpg",
+                                    ),
+                                    fit: BoxFit.fill,
+                                  )
                                 : FittedBox(
                                     child:
                                         Image.network(_imageUrlController.text),
@@ -343,7 +396,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                     originalPrice: _editedProduct.originalPrice,
                                     dealPrice: _editedProduct.dealPrice,
                                     imageUrl: value,
-                                    date: _editedProduct.date);
+                                    date: _editedProduct.date,
+                                    category: _editedProduct.category);
                               },
                               validator: (value) {
                                 if (_imageUrlController.text.isEmpty) {

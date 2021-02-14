@@ -10,6 +10,7 @@ class Product with ChangeNotifier {
   final double dealPrice;
   final String imageUrl;
   final String date;
+  final String category;
   bool isFavorite;
   final String creatorId;
 
@@ -21,6 +22,7 @@ class Product with ChangeNotifier {
     @required this.dealPrice,
     @required this.date,
     @required this.imageUrl,
+    @required this.category,
     this.isFavorite = false,
     this.creatorId,
   });

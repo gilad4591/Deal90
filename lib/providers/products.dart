@@ -54,6 +54,7 @@ class Products with ChangeNotifier {
               dealPrice: productData['dealPrice'],
               date: productData['date'],
               creatorId: productData['creatorId'],
+              category: productData['category'],
               isFavorite: favoriteData == null
                   ? false
                   : favoriteData[productId] ?? false,
@@ -85,6 +86,7 @@ class Products with ChangeNotifier {
           'isFavorite': product.isFavorite,
           'date': product.date,
           'creatorId': userId,
+          'category': product.category,
         }),
       );
       final newProduct = Product(
@@ -94,6 +96,7 @@ class Products with ChangeNotifier {
         description: product.description,
         date: product.date,
         imageUrl: product.imageUrl,
+        category: product.category,
         id: json.decode(response.body)['name'],
       );
       _items.add(newProduct);
@@ -105,6 +108,11 @@ class Products with ChangeNotifier {
 
   Product findById(String id) {
     return _items.firstWhere((prod) => prod.id == id);
+  }
+
+  Product findByCategory(String category) {
+    //didnt added to products overview yet
+    return _items.firstWhere((prod) => prod.category == category);
   }
 
   Future<void> updateProduct(String id, Product newProduct) async {
@@ -120,6 +128,7 @@ class Products with ChangeNotifier {
             'originalPrice': newProduct.originalPrice,
             'dealPrice': newProduct.dealPrice,
             'date': newProduct.date,
+            'category': newProduct.category,
           }));
       _items[prodIndex] = newProduct;
       notifyListeners();
