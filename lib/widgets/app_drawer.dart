@@ -1,4 +1,5 @@
 import 'package:finalproject/models/auth.dart';
+import 'package:finalproject/screens/profile_screen.dart';
 // import 'package:finalproject/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/orders_screen.dart';
@@ -20,7 +21,8 @@ class AppDrawer extends StatelessWidget {
               leading: Icon(Icons.account_circle),
               title: Text('Profile'),
               onTap: () {
-                // Navigator.of(context).pushReplacementNamed('/');
+                Navigator.of(context)
+                    .pushReplacementNamed(ProfileScreen.routeName);
               }),
           Divider(),
           ListTile(

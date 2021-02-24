@@ -187,6 +187,7 @@ class _AuthCardState extends State<AuthCard>
           'email': _authData['email'],
           'city': ' ',
           'date': ' ',
+          'phone': ' ',
         });
       }
     } on HttpException catch (error) {
