@@ -17,13 +17,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   var _isLoading = false;
-  final _formKey = GlobalKey<FormBuilderState>().provider;
+  //final _formKey = GlobalKey<FormBuilderState>().provider;
 
   Future<void> _saveForm() async {
     final auth = Provider.of<Auth>(context, listen: false);
-    if (_formKey.currentState.saveAndValidate()) {
-      print(_formKey.currentState.value);
-    }
+    // if (_formKey.currentState.saveAndValidate()) {
+    //   print(_formKey.currentState.value);
+    // }
   }
 
   @override
