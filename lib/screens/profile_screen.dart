@@ -1,9 +1,11 @@
-import 'package:finalproject/providers/User.dart';
+import 'package:finalproject/providers/profile.dart';
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/models/http_exception.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key}) : super(key: key);
@@ -15,55 +17,21 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   var _isLoading = false;
-  final _nameFocusNode = FocusNode();
-  final _emailFocusNode = FocusNode();
-  final _userIdFocusNode = FocusNode();
-  final _dateFocusNode = FocusNode();
-  final _phoneNumberFocusNode = FocusNode();
-  final _cityFocusNode = FocusNode();
-  final _form = GlobalKey<FormState>();
-
-  var _editedProfile = User(
-    userId: null,
-    email: '',
-    city: '',
-    phoneNumber: '',
-    name: '',
-    date: '',
-  );
-  var _isInit = true;
-  var _initValues = {
-    'userId': '',
-    'phone': '',
-    'email': '',
-    'city': '',
-    'name': '',
-    'date': '',
-  };
-
-  @override
-  void dispose() {
-    _phoneNumberFocusNode.dispose();
-    _cityFocusNode.dispose();
-    _dateFocusNode.dispose();
-    _emailFocusNode.dispose();
-    _userIdFocusNode.dispose();
-    super.dispose();
-  }
-
-  void initState() {
-    {
-      super.initState();
-    }
-  }
+  final _formKey = GlobalKey<FormBuilderState>().provider;
 
   Future<void> _saveForm() async {
     final auth = Provider.of<Auth>(context, listen: false);
+    if (_formKey.currentState.saveAndValidate()) {
+      print(_formKey.currentState.value);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    var now = DateTime.now();
+    var today = new DateTime(now.year, now.month, now.day);
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text('Edit Profile'),
         actions: <Widget>[
@@ -79,141 +47,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
             )
           : Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _form,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        // initialValue: _initValues['email'],
-                        decoration: InputDecoration(labelText: 'Email'),
-                        textInputAction: TextInputAction.next,
-                        enabled: false,
-                        onFieldSubmitted: (_) {
-                          // FocusScope.of(context)
-                          //     .requestFocus(_originalPriceFocusNode);
-                        },
-                        onSaved: (value) {
-                          // _editedProfile = User(
-                          //     title: value,
-                          //     id: _editedProduct.id,
-                          //     description: _editedProduct.description,
-                          //     originalPrice: _editedProduct.originalPrice,
-                          //     dealPrice: _editedProduct.dealPrice,
-                          //     imageUrl: _editedProduct.imageUrl,
-                          //     date: _editedProduct.date,
-                          //     category: _editedProduct.category);
-                        },
+              child: FormBuilder(
+                key: Provider.of<Profile>(context, listen: false).fbKey,
+                child: Column(
+                  children: <Widget>[
+                    FormBuilderTextWidget(
+                        attributeTextField: 'Email', isEnabled: false),
+                    FormBuilderTextWidget(
+                        attributeTextField: 'Name', isEnabled: true),
+                    FormBuilderTextWidget(
+                        attributeTextField: 'City', isEnabled: true),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      height: 50,
+                      child: FormBuilderDateTimePicker(
+                        attribute: "date",
+                        inputType: InputType.date,
+                        firstDate: today,
+                        format: DateFormat("dd-MM-yyyy"),
+                        decoration: InputDecoration(
+                          labelText: "Event date",
+                        ),
                       ),
-                      TextFormField(
-                        // initialValue: _initValues['name'],
-                        decoration: InputDecoration(labelText: 'Name'),
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) {
-                          // FocusScope.of(context)
-                          //     .requestFocus(_originalPriceFocusNode);
-                        },
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter a value';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          // _editedProfile = User(
-                          //     title: value,
-                          //     id: _editedProduct.id,
-                          //     description: _editedProduct.description,
-                          //     originalPrice: _editedProduct.originalPrice,
-                          //     dealPrice: _editedProduct.dealPrice,
-                          //     imageUrl: _editedProduct.imageUrl,
-                          //     date: _editedProduct.date,
-                          //     category: _editedProduct.category);
-                        },
-                      ),
-                      TextFormField(
-                        // initialValue: _initValues['city'],
-                        decoration: InputDecoration(labelText: 'City'),
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) {
-                          // FocusScope.of(context)
-                          //     .requestFocus(_originalPriceFocusNode);
-                        },
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter a value';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          // _editedProfile = User(
-                          //     title: value,
-                          //     id: _editedProduct.id,
-                          //     description: _editedProduct.description,
-                          //     originalPrice: _editedProduct.originalPrice,
-                          //     dealPrice: _editedProduct.dealPrice,
-                          //     imageUrl: _editedProduct.imageUrl,
-                          //     date: _editedProduct.date,
-                          //     category: _editedProduct.category);
-                        },
-                      ),
-                      TextFormField(
-                        // initialValue: _initValues['phone'],
-                        decoration: InputDecoration(labelText: 'Phone'),
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) {
-                          // FocusScope.of(context)
-                          //     .requestFocus(_originalPriceFocusNode);
-                        },
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter a valid phone number';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          // _editedProfile = User(
-                          //     title: value,
-                          //     id: _editedProduct.id,
-                          //     description: _editedProduct.description,
-                          //     originalPrice: _editedProduct.originalPrice,
-                          //     dealPrice: _editedProduct.dealPrice,
-                          //     imageUrl: _editedProduct.imageUrl,
-                          //     date: _editedProduct.date,
-                          //     category: _editedProduct.category);
-                        },
-                      ),
-                      TextFormField(
-                        // initialValue: _initValues['date'],
-                        decoration: InputDecoration(labelText: 'Date'),
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) {
-                          // FocusScope.of(context)
-                          //     .requestFocus(_originalPriceFocusNode);
-                        },
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter a title';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          // _editedProfile = User(
-                          //     title: value,
-                          //     id: _editedProduct.id,
-                          //     description: _editedProduct.description,
-                          //     originalPrice: _editedProduct.originalPrice,
-                          //     dealPrice: _editedProduct.dealPrice,
-                          //     imageUrl: _editedProduct.imageUrl,
-                          //     date: _editedProduct.date,
-                          //     category: _editedProduct.category);
-                        },
-                      ),
-                    ],
-                  ),
+                    ),
+                    FormBuilderTextWidget(
+                        attributeTextField: 'Phone', isEnabled: true),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
                 ),
               ),
             ),
+    );
+  }
+}
+
+class FormBuilderTextWidget extends StatelessWidget {
+  final String attributeTextField;
+  final bool isEnabled;
+  const FormBuilderTextWidget({
+    Key key,
+    this.attributeTextField,
+    this.isEnabled,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FormBuilderTextField(
+      attribute: '$attributeTextField',
+
+      // initialValue: _initValues['email'],
+      decoration: InputDecoration(labelText: '$attributeTextField'),
+      enabled: isEnabled,
+      validators: [FormBuilderValidators.required()],
     );
   }
 }
