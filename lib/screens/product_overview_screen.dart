@@ -68,6 +68,25 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
               });
             },
             icon: Icon(
+              Icons.filter_alt,
+            ),
+            itemBuilder: (_) => [
+              PopupMenuItem(
+                  child: Text('TEST'), value: FilterOptions.Favorites),
+              PopupMenuItem(child: Text('TEST'), value: FilterOptions.All),
+            ],
+          ),
+          PopupMenuButton(
+            onSelected: (FilterOptions selectedValue) {
+              setState(() {
+                if (selectedValue == FilterOptions.Favorites) {
+                  _showOnlyFavorites = true;
+                } else {
+                  _showOnlyFavorites = false;
+                }
+              });
+            },
+            icon: Icon(
               Icons.more_vert,
             ),
             itemBuilder: (_) => [

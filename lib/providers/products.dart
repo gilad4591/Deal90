@@ -21,6 +21,10 @@ class Products with ChangeNotifier {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
+  List<Product> getCategoryItems(String category) {
+    return _items.where((prodItem) => prodItem.category == category).toList();
+  }
+
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     final filterString =
         filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
