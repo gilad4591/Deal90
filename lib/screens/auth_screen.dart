@@ -2,6 +2,7 @@
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/models/http_exception.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -41,29 +42,32 @@ class AuthScreen extends StatelessWidget {
                   Flexible(
                     child: Container(
                       margin: EdgeInsets.only(bottom: 20.0),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 45.0, horizontal: 10.0),
                       //transform: Matrix4.rotationZ(-3 * pi / 180)
                       //..translate(-10.0),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(360),
                         color: Theme.of(context).primaryColor,
                         boxShadow: [
                           BoxShadow(
-                            blurRadius: 8,
-                            color: Colors.black26,
+                            blurRadius: 14,
+                            color: Colors.black54,
                             offset: Offset(0, 2),
-                          )
+                          ),
                         ],
                       ),
                       child: Text(
                         'Deal90',
-                        style: TextStyle(
-                          color:
-                              Theme.of(context).accentTextTheme.headline6.color,
-                          fontSize: 44,
-                          fontFamily: 'Anton',
-                          fontWeight: FontWeight.bold,
+                        style: GoogleFonts.lobster(
+                          textStyle: TextStyle(
+                            color: Theme.of(context)
+                                .accentTextTheme
+                                .headline6
+                                .color,
+                            fontSize: 44,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
