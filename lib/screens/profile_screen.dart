@@ -109,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Container(
                   height: 30,
-                  color: Colors.grey[200],
+                  //color: Colors.grey[200],
                   child: Text(
                     'Email: ' + currentLoggedInProfile['email'],
                     style: GoogleFonts.robotoMono(

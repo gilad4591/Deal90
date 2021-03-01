@@ -8,9 +8,16 @@ import '../providers/cart.dart';
 import '../screens/cart_screen.dart';
 import '../widgets/app_drawer.dart';
 import '../providers/products.dart';
+import 'package:grouped_buttons/grouped_buttons.dart';
 
 enum FilterOptions {
   Favorites,
+  All,
+}
+enum FilterCategory {
+  Music,
+  Photography,
+  Other,
   All,
 }
 
@@ -24,6 +31,8 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
   var _showOnlyFavorites = false;
   var _isInit = true;
   var _isLoading = false;
+  var filterByCategory = false;
+  var category;
 
   @override
   void initState() {
@@ -58,12 +67,35 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
         title: Text('Deal90'),
         actions: <Widget>[
           PopupMenuButton(
-            onSelected: (FilterOptions selectedValue) {
+            onSelected: (FilterCategory selectedValue) {
               setState(() {
-                if (selectedValue == FilterOptions.Favorites) {
-                  _showOnlyFavorites = true;
+                if (selectedValue
+                        .toString()
+                        .compareTo(FilterCategory.Music.toString()) ==
+                    0) {
+                  filterByCategory = true;
+                  category = 'music';
+                } else if (selectedValue
+                        .toString()
+                        .compareTo(FilterCategory.Photography.toString()) ==
+                    0) {
+                  filterByCategory = true;
+                  category = 'photography';
+                } else if (selectedValue
+                        .toString()
+                        .compareTo(FilterCategory.Other.toString()) ==
+                    0) {
+                  filterByCategory = true;
+                  category = 'other';
+                } else if (selectedValue
+                        .toString()
+                        .compareTo(FilterCategory.All.toString()) ==
+                    0) {
+                  filterByCategory = false;
+                  category = '';
                 } else {
-                  _showOnlyFavorites = false;
+                  filterByCategory = false;
+                  category = null;
                 }
               });
             },
@@ -71,9 +103,12 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
               Icons.filter_alt,
             ),
             itemBuilder: (_) => [
+              PopupMenuItem(child: Text('Music'), value: FilterCategory.Music),
               PopupMenuItem(
-                  child: Text('TEST'), value: FilterOptions.Favorites),
-              PopupMenuItem(child: Text('TEST'), value: FilterOptions.All),
+                  child: Text('Photography'),
+                  value: FilterCategory.Photography),
+              PopupMenuItem(child: Text('Other'), value: FilterCategory.Other),
+              PopupMenuItem(child: Text('All'), value: FilterCategory.All),
             ],
           ),
           PopupMenuButton(
@@ -97,7 +132,6 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
             ],
           ),
           Consumer<Cart>(
-            // ignore: non_constant_identifier_names
             builder: (_, cart, ch) => Badge(
               child: ch,
               value: cart.itemCount.toString(),
@@ -120,7 +154,7 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : ProductsGrid(_showOnlyFavorites),
+            : ProductsGrid(_showOnlyFavorites, category, filterByCategory),
       ),
     );
   }

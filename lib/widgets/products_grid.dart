@@ -5,12 +5,18 @@ import 'package:flutter/material.dart';
 
 class ProductsGrid extends StatelessWidget {
   final bool showFavorites;
-  ProductsGrid(this.showFavorites);
+  final bool isFilterByCategory;
+  final String categoryFilter;
+  ProductsGrid(
+      this.showFavorites, this.categoryFilter, this.isFilterByCategory);
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
-    final products =
+    final productsFav =
         showFavorites ? productsData.favoriteItems : productsData.items;
+    final products = isFilterByCategory
+        ? (productsFav.where((i) => i.category == categoryFilter).toList())
+        : productsFav;
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: products.length,

@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:intl/intl.dart';
-
 class Products with ChangeNotifier {
   List<Product> _items = [];
 
@@ -44,10 +42,6 @@ class Products with ChangeNotifier {
       //var nowTime = new DateTime.now();
       extractedData.forEach(
         (productId, productData) {
-          //DateTime productDateTime =
-          //  new DateFormat("dd/mm/yy").parse(productData['date']);
-          //if (productDateTime.isAfter(nowTime) == true) {  - needs to be fixed
-          //print("product added");
           loadedProducts.add(
             Product(
               id: productId,
