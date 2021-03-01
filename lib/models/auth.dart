@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/http_exception.dart';
 import 'dart:async';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Auth with ChangeNotifier {
   String _token;

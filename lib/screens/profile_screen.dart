@@ -1,6 +1,7 @@
 import 'package:finalproject/providers/profile.dart';
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/screens/product_overview_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -37,8 +38,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'name': _formKey.currentState.value['Name'].toString(),
       });
     }
-    //Navigator.of(context).pop();
-    // ignore: deprecated_member_use
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => ProductOveviewScreen()),
@@ -103,61 +102,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: FormBuilder(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      currentLoggedInProfile['email'],
-                      style: TextStyle(
+          : Column(
+              children: [
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  height: 30,
+                  color: Colors.grey[200],
+                  child: Text(
+                    'Email: ' + currentLoggedInProfile['email'],
+                    style: GoogleFonts.robotoMono(
+                      textStyle: TextStyle(
                         fontSize: 20,
-                        color: Colors.blueAccent,
-                        // fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        //fontWeight: FontWeight.bold,
                       ),
                     ),
-                    FormBuilderTextWidget(
-                      attributeTextField: 'Name',
-                      isEnabled: true,
-                      initValue: currentLoggedInProfile['name'],
+                  ),
+                ),
+                SizedBox(height: 25),
+                Center(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    FormBuilderTextWidget(
-                      attributeTextField: 'City',
-                      isEnabled: true,
-                      initValue: currentLoggedInProfile['city'],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      height: 50,
-                      child: FormBuilderDateTimePicker(
-                        attribute: "date",
-                        inputType: InputType.date,
-                        firstDate: today,
-                        format: DateFormat("dd-MM-yyyy"),
-                        //initialDate: DateTime(initValues['date']),
-                        decoration: InputDecoration(
-                          labelText: "Event date",
-                          labelStyle: TextStyle(
-                            color: Colors.blueAccent,
-                            fontSize: 14,
-                          ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: FormBuilder(
+                        key: _formKey,
+                        child: Column(
+                          children: <Widget>[
+                            FormBuilderTextWidget(
+                              attributeTextField: 'Name',
+                              isEnabled: true,
+                              initValue: currentLoggedInProfile['name'],
+                            ),
+                            FormBuilderTextWidget(
+                              attributeTextField: 'City',
+                              isEnabled: true,
+                              initValue: currentLoggedInProfile['city'],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              height: 50,
+                              child: FormBuilderDateTimePicker(
+                                attribute: "date",
+                                inputType: InputType.date,
+                                firstDate: today,
+                                format: DateFormat("dd-MM-yyyy"),
+                                //initialDate: today,
+                                decoration: InputDecoration(
+                                  labelText: "Event date",
+                                  labelStyle: TextStyle(
+                                    color: Colors.blueAccent,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            FormBuilderTextWidget(
+                              attributeTextField: 'Phone',
+                              isEnabled: true,
+                              initValue: currentLoggedInProfile['phone'],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    FormBuilderTextWidget(
-                      attributeTextField: 'Phone',
-                      isEnabled: true,
-                      initValue: currentLoggedInProfile['phone'],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
     );
   }
