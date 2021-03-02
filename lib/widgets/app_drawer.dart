@@ -1,10 +1,11 @@
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/screens/profile_screen.dart';
-// import 'package:finalproject/screens/auth_screen.dart';
+//import 'package:finalproject/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/orders_screen.dart';
 import 'package:finalproject/screens/user_products_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:finalproject/screens/chat_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -47,6 +48,15 @@ class AppDrawer extends StatelessWidget {
                 Navigator.of(context)
                     .pushReplacementNamed(UserProductScreen.routeName);
               }),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.chat),
+            title: Text('Chat'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed(ChatScreen.routeName);
+            },
+          ),
           Divider(),
           ListTile(
             leading: Icon(Icons.exit_to_app),

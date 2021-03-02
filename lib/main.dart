@@ -13,6 +13,7 @@ import 'models/auth.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/chat_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
             UserProductScreen.routeName: (ctx) => UserProductScreen(),
             EditProductScreen.routeName: (ctx) => EditProductScreen(),
             ProfileScreen.routeName: (ctx) => ProfileScreen(),
+            ChatScreen.routeName: (ctx) => ChatScreen(),
           },
         ),
       ),
