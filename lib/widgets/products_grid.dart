@@ -21,7 +21,7 @@ class ProductsGrid extends StatelessWidget {
         : productsFav;
     final filteredProducs = isFilterByDate
         ? (products.where((i) => i.date.toString() == dateFilter).toList())
-        : productsFav;
+        : products;
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: filteredProducs.length,

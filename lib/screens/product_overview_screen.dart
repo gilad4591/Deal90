@@ -170,9 +170,11 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
                                                 null) {
                                               setState(() {
                                                 category = _formKey.currentState
-                                                    .value['category']
-                                                    .toString();
+                                                    .value['category'];
                                                 filterByCategory = true;
+                                                print(_formKey.currentState
+                                                    .value['category']);
+                                                print(filterByCategory);
                                               });
                                             } else {
                                               setState(() {
