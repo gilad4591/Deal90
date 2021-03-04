@@ -7,8 +7,10 @@ class ProductsGrid extends StatelessWidget {
   final bool showFavorites;
   final bool isFilterByCategory;
   final String categoryFilter;
-  ProductsGrid(
-      this.showFavorites, this.categoryFilter, this.isFilterByCategory);
+  final String dateFilter;
+  final bool isFilterByDate;
+  ProductsGrid(this.showFavorites, this.categoryFilter, this.isFilterByCategory,
+      this.dateFilter, this.isFilterByDate);
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
@@ -17,11 +19,14 @@ class ProductsGrid extends StatelessWidget {
     final products = isFilterByCategory
         ? (productsFav.where((i) => i.category == categoryFilter).toList())
         : productsFav;
+    final filteredProducs = isFilterByDate
+        ? (products.where((i) => i.date.toString() == dateFilter).toList())
+        : productsFav;
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
-      itemCount: products.length,
+      itemCount: filteredProducs.length,
       itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
-        value: products[i],
+        value: filteredProducs[i],
         child: ProductItem(),
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
