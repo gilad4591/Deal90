@@ -5,6 +5,7 @@ import 'package:finalproject/providers/products.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:finalproject/models/screen_arguments.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -23,7 +24,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
-  final _openDropDownProgKey = GlobalKey<DropdownSearchState<String>>();
   String categoryDeal;
   List<String> categories = ["music", "photography", "makeup", "other"];
   var _editedProduct = Product(
@@ -69,11 +69,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context).settings.arguments as String;
+      final ScreenArguments productId =
+          ModalRoute.of(context).settings.arguments;
       // check if deal exists
       if (productId != null) {
-        _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
+        _editedProduct = Provider.of<Products>(context, listen: false)
+            .findById(productId.id);
+        var copy = productId.copy;
         _initValues = {
           'title': _editedProduct.title,
           'originalPrice': _editedProduct.originalPrice.toString(),
@@ -111,8 +113,32 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     _form.currentState.save();
     if (_editedProduct.id != null) {
-      await Provider.of<Products>(context, listen: false)
-          .updateProduct(_editedProduct.id, _editedProduct);
+      final ScreenArguments product = ModalRoute.of(context).settings.arguments;
+      if (product.copy) {
+        try {
+          await Provider.of<Products>(context, listen: false)
+              .addProduct(_editedProduct);
+        } catch (error) {
+          await showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text('An error occurred!'),
+              content: Text('Something went wrong.'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                )
+              ],
+            ),
+          );
+        }
+      } else {
+        await Provider.of<Products>(context, listen: false)
+            .updateProduct(_editedProduct.id, _editedProduct);
+      }
     } else {
       try {
         await Provider.of<Products>(context, listen: false)
