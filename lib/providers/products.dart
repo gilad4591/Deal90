@@ -61,7 +61,7 @@ class Products with ChangeNotifier {
           //}
         },
       );
-      _items = loadedProducts;
+      _items = loadedProducts.reversed.toList();
       notifyListeners();
     } catch (error) {
       throw (error);

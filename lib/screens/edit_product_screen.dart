@@ -25,7 +25,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
   String categoryDeal;
-  List<String> categories = ["music", "photography", "makeup", "other"];
+  List<String> categories = [
+    "music",
+    "photography",
+    "makeup",
+    "dressing",
+    "hairdesign",
+    "other",
+  ];
   var _editedProduct = Product(
       id: null,
       title: '',
@@ -59,6 +66,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
+  var pattern = RegExp(
+      r"([0][1-9]|[1|2][0-9]|[3][0|1])[/]([0][1-9]|[1][0-2])[/]([0-9]{4})$");
+
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
     {
@@ -75,7 +85,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
       if (productId != null) {
         _editedProduct = Provider.of<Products>(context, listen: false)
             .findById(productId.id);
-        var copy = productId.copy;
         _initValues = {
           'title': _editedProduct.title,
           'originalPrice': _editedProduct.originalPrice.toString(),
@@ -342,6 +351,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'Please enter a date.';
+                          }
+                          if (!pattern.hasMatch(value)) {
+                            return 'Please enter date with format dd/mm/yyyy';
                           }
                           return null;
                         },

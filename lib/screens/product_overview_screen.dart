@@ -15,12 +15,6 @@ enum FilterOptions {
   Favorites,
   All,
 }
-enum FilterCategory {
-  Music,
-  Photography,
-  Other,
-  All,
-}
 
 final _formKey = GlobalKey<FormBuilderState>();
 
@@ -132,6 +126,15 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
                                           value: 'photography',
                                           child: Text('Photography')),
                                       FormBuilderFieldOption(
+                                          value: 'makeup',
+                                          child: Text('Makeup')),
+                                      FormBuilderFieldOption(
+                                          value: 'hairdesign',
+                                          child: Text('Hair design')),
+                                      FormBuilderFieldOption(
+                                          value: 'dressing',
+                                          child: Text('Dressing')),
+                                      FormBuilderFieldOption(
                                           value: 'other', child: Text('Other')),
                                     ],
                                   ),
@@ -195,10 +198,8 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
                                             } else {
                                               filterByDate = false;
                                             }
-
                                             Navigator.pop(context);
                                           }
-                                          // print(_formKey.currentState.value);
                                         }),
                                   )
                                 ],
@@ -209,52 +210,6 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
                       );
                     });
               }),
-          // SearchQuery(),
-          // PopupMenuButton(
-          //   onSelected: (FilterCategory selectedValue) {
-          //     setState(() {
-          //       if (selectedValue
-          //               .toString()
-          //               .compareTo(FilterCategory.Music.toString()) ==
-          //           0) {
-          //         filterByCategory = true;
-          //         category = 'music';
-          //       } else if (selectedValue
-          //               .toString()
-          //               .compareTo(FilterCategory.Photography.toString()) ==
-          //           0) {
-          //         filterByCategory = true;
-          //         category = 'photography';
-          //       } else if (selectedValue
-          //               .toString()
-          //               .compareTo(FilterCategory.Other.toString()) ==
-          //           0) {
-          //         filterByCategory = true;
-          //         category = 'other';
-          //       } else if (selectedValue
-          //               .toString()
-          //               .compareTo(FilterCategory.All.toString()) ==
-          //           0) {
-          //         filterByCategory = false;
-          //         category = '';
-          //       } else {
-          //         filterByCategory = false;
-          //         category = null;
-          //       }
-          //     });
-          //   },
-          //   icon: Icon(
-          //     Icons.filter_alt,
-          //   ),
-          //   itemBuilder: (_) => [
-          //     PopupMenuItem(child: Text('Music'), value: FilterCategory.Music),
-          //     PopupMenuItem(
-          //         child: Text('Photography'),
-          //         value: FilterCategory.Photography),
-          //     PopupMenuItem(child: Text('Other'), value: FilterCategory.Other),
-          //     PopupMenuItem(child: Text('All'), value: FilterCategory.All),
-          //   ],
-          // ),
           PopupMenuButton(
             onSelected: (FilterOptions selectedValue) {
               setState(() {
