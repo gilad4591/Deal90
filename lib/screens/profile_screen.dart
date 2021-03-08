@@ -27,12 +27,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final auth = Provider.of<Auth>(context, listen: false);
     if (_formKey.currentState.saveAndValidate()) {
       print(_formKey.currentState.value);
-
+      var date;
+      if (_formKey.currentState.value['date'] is DateTime) {
+        date = DateFormat("dd/MM/yyyy")
+            .format(_formKey.currentState.value['date']);
+      }
       await Firestore.instance
           .collection('users')
           .document(auth.userId)
           .updateData({
-        'date': _formKey.currentState.value['date'].toString(),
+        'date': date,
         'city': _formKey.currentState.value['City'].toString(),
         'phone': _formKey.currentState.value['Phone'].toString(),
         'name': _formKey.currentState.value['Name'].toString(),
@@ -83,6 +87,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     readData();
+    DateTime date;
+    if (currentLoggedInProfile['date'] != ('null')) {
+      if (!_isLoading) {
+        date = parseDateFormat(currentLoggedInProfile['date']);
+      }
+    } else {
+      date = null;
+    }
 
     var now = DateTime.now();
     var today = new DateTime(now.year, now.month, now.day);
@@ -163,8 +175,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 attribute: "date",
                                 inputType: InputType.date,
                                 firstDate: today,
-                                format: DateFormat("dd-MM-yyyy"),
-                                //initialDate: today,
+                                format: DateFormat("dd/MM/yyyy"),
+                                initialValue: date,
                                 decoration: InputDecoration(
                                   labelText: "Event date",
                                   labelStyle: TextStyle(
@@ -192,6 +204,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
     );
   }
+
+  DateTime parseDateFormat(String currentLoggedInProfile) {
+    String curr = currentLoggedInProfile;
+    print(curr);
+    var inputFormat = new DateFormat('dd/MM/yyyy');
+    var date1 = inputFormat.parse(curr);
+    var outputFormat = DateFormat("yyyy-MM-dd");
+    return outputFormat.parse("$date1");
+  }
 }
 
 class FormBuilderTextWidget extends StatelessWidget {
@@ -207,7 +228,6 @@ class FormBuilderTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //print(initValue);
     return FormBuilderTextField(
       attribute: attributeTextField,
       initialValue: initValue,
