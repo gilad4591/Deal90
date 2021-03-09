@@ -39,36 +39,34 @@ class AuthScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Flexible(
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 20.0),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 45.0, horizontal: 10.0),
-                      //transform: Matrix4.rotationZ(-3 * pi / 180)
-                      //..translate(-10.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(360),
-                        color: Theme.of(context).primaryColor,
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 14,
-                            color: Colors.black54,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
+                  Text(
+                    'Deal90',
+                    style: GoogleFonts.lobster(
+                      textStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 42,
+                        fontWeight: FontWeight.bold,
                       ),
-                      child: Text(
-                        'Deal90',
-                        style: GoogleFonts.lobster(
-                          textStyle: TextStyle(
-                            color: Theme.of(context)
-                                .accentTextTheme
-                                .headline6
-                                .color,
-                            fontSize: 44,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    ),
+                  ),
+                  Container(
+                    height: 150,
+                    width: 150,
+                    margin: EdgeInsets.only(bottom: 20.0),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 45.0, horizontal: 10.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(360),
+                      color: Theme.of(context).primaryColor,
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 14,
+                          color: Colors.black54,
+                          offset: Offset(0, 2),
                         ),
+                      ],
+                      image: DecorationImage(
+                        image: AssetImage("assets/images/cheers.png"),
                       ),
                     ),
                   ),
@@ -138,7 +136,6 @@ class _AuthCardState extends State<AuthCard>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _controller.dispose();
   }

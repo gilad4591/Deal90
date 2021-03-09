@@ -14,6 +14,8 @@ import 'screens/edit_product_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/chat_screen.dart';
+import 'screens/order_notification_screen.dart';
+import 'screens/main_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -50,8 +52,10 @@ class MyApp extends StatelessWidget {
             accentColor: Colors.blueAccent,
             fontFamily: 'Muli',
           ),
-          home: auth.isAuth ? ProductOveviewScreen() : AuthScreen(),
+          home: auth.isAuth ? MainScreen() : AuthScreen(),
           routes: {
+            MainScreen.routeName: (ctx) => MainScreen(),
+            ProductOveviewScreen.routeName: (ctx) => ProductOveviewScreen(),
             ProductDetailsScreen.routeName: (ctx) => ProductDetailsScreen(),
             CartScreen.routeName: (ctx) => CartScreen(),
             OrdersScreen.routeName: (ctx) => OrdersScreen(),
@@ -59,6 +63,8 @@ class MyApp extends StatelessWidget {
             EditProductScreen.routeName: (ctx) => EditProductScreen(),
             ProfileScreen.routeName: (ctx) => ProfileScreen(),
             ChatScreen.routeName: (ctx) => ChatScreen(),
+            OrderNotificationScreen.routeName: (ctx) =>
+                OrderNotificationScreen(),
           },
         ),
       ),

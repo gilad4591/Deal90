@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     readData();
     DateTime date;
-    if (currentLoggedInProfile['date'] != ('null')) {
+    if (currentLoggedInProfile['date'] != null) {
       if (!_isLoading) {
         date = parseDateFormat(currentLoggedInProfile['date']);
       }

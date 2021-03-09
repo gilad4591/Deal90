@@ -1,11 +1,12 @@
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/screens/profile_screen.dart';
-//import 'package:finalproject/screens/auth_screen.dart';
+import 'package:finalproject/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/orders_screen.dart';
 import 'package:finalproject/screens/user_products_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:finalproject/screens/chat_screen.dart';
+import 'package:finalproject/screens/product_overview_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -14,9 +15,17 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text('Weclome to DEAL90'),
+            title: Text('Welcome to DEAL90'),
             automaticallyImplyLeading: false,
           ),
+          Divider(),
+          ListTile(
+              leading: Icon(Icons.home),
+              title: Text('Main'),
+              onTap: () {
+                Navigator.of(context)
+                    .pushReplacementNamed(MainScreen.routeName);
+              }),
           Divider(),
           ListTile(
               leading: Icon(Icons.account_circle),
@@ -30,7 +39,8 @@ class AppDrawer extends StatelessWidget {
               leading: Icon(Icons.shop),
               title: Text('Deals'),
               onTap: () {
-                Navigator.of(context).pushReplacementNamed('/');
+                Navigator.of(context)
+                    .pushReplacementNamed(ProductOveviewScreen.routeName);
               }),
           Divider(),
           ListTile(

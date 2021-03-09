@@ -21,6 +21,7 @@ final _formKey = GlobalKey<FormBuilderState>();
 final region = {'Jerusalem', 'Northern', 'Central', 'Southern'};
 
 class ProductOveviewScreen extends StatefulWidget {
+  static const routeName = '/product-overview';
   @override
   _ProductOveviewScreenState createState() => _ProductOveviewScreenState();
 }
