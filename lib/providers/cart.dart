@@ -4,8 +4,12 @@ class CartItem {
   final String id;
   final String title;
   final double price;
+  final String creator;
+  final String productId;
 
   CartItem({
+    @required this.productId,
+    @required this.creator,
     @required this.id,
     @required this.title,
     @required this.price,
@@ -19,7 +23,7 @@ class Cart with ChangeNotifier {
     return {..._items};
   }
 
-  void addItem(String productId, double price, String title) {
+  void addItem(String productId, double price, String title, String creator) {
     if (_items.containsKey(productId)) {
       //shows an error
     } else {
@@ -29,6 +33,8 @@ class Cart with ChangeNotifier {
           id: DateTime.now().toString(),
           title: title,
           price: price,
+          creator: creator,
+          productId: productId,
         ),
       );
     }

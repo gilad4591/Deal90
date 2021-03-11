@@ -1,4 +1,3 @@
-import 'package:finalproject/providers/profile.dart';
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/screens/product_overview_screen.dart';
 import 'package:google_fonts/google_fonts.dart';

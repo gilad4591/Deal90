@@ -8,8 +8,9 @@ class CartItem extends StatelessWidget {
   final String productId;
   final double price;
   final String title;
+  final String creator;
 
-  const CartItem(this.id, this.productId, this.price, this.title);
+  const CartItem(this.id, this.productId, this.price, this.title, this.creator);
   @override
   Widget build(BuildContext context) {
     return Dismissible(

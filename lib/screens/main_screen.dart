@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:finalproject/models/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finalproject/screens/order_notification_screen.dart';
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key key}) : super(key: key);
@@ -55,56 +56,150 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     readData();
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          ClipPath(
-            clipper: MyClipper(),
-            child: Container(
-              height: 232,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [
-                    Color(0xFF3383CD),
-                    Color(0xFF11249F),
+    // if (_isLoading) {
+    //   CircularProgressIndicator();
+    // }
+    return (_isLoading)
+        ? CircularProgressIndicator()
+        : Scaffold(
+            body: Column(
+              children: <Widget>[
+                ClipPath(
+                  clipper: MyClipper(),
+                  child: Container(
+                    height: 232,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          Color(0xFF3383CD),
+                          Color(0xFF11249F),
+                        ],
+                      ),
+                      image: DecorationImage(
+                        image: AssetImage("assets/images/party.png"),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  height: 60,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(
+                      color: Color(0xFFE5E5E5),
+                    ),
+                  ),
+                  child: Center(
+                    child: currentLoggedInProfile['name'].length > 0
+                        ? Text(
+                            "Welcome Back " + currentLoggedInProfile['name'],
+                            textAlign: TextAlign.center,
+                          )
+                        : Text("Welcome"),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ButtonMain('First Button'),
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                        ),
+                        ButtonMain('Second Button'),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          child: ButtonMain('Notification'),
+                          onTap: () {
+                            print("clicked");
+                            Navigator.of(context).pushReplacementNamed(
+                                OrderNotificationScreen.routeName);
+                          },
+                        ),
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                        ),
+                        ButtonMain('Fourth Button'),
+                      ],
+                    ),
                   ],
                 ),
-                image: DecorationImage(
-                  image: AssetImage("assets/images/party.png"),
-                ),
-              ),
+              ],
             ),
+            appBar: AppBar(
+              title: Text('Deal90'),
+            ),
+            drawer: AppDrawer(),
+          );
+  }
+}
+
+class ButtonMain extends StatelessWidget {
+  final String textButton;
+  const ButtonMain(this.textButton, {Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        width: 180,
+        height: 120,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF3383CD),
+              Color(0xFF11249F),
+              Colors.black,
+              // Colors.white,
+              // Colors.blue,
+            ],
           ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            height: 60,
-            width: double.infinity,
-            decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            textButton,
+            style: TextStyle(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Color(0xFFE5E5E5),
-              ),
-            ),
-            child: Center(
-              child: currentLoggedInProfile['name'].length > 0
-                  ? Text(
-                      "Welcome Back " + currentLoggedInProfile['name'],
-                      textAlign: TextAlign.center,
-                    )
-                  : Text("Welcome"),
             ),
           ),
-        ],
+        ),
       ),
-      appBar: AppBar(
-        title: Text('Deal90'),
-      ),
-      drawer: AppDrawer(),
     );
+    //  <Widget>[
+    // Text(textButton),
+    // ],
   }
 }
 

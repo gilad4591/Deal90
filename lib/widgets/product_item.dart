@@ -70,7 +70,8 @@ class ProductItem extends StatelessWidget {
             ),
             onPressed: () {
               if (product.creatorId != authData.userId) {
-                cart.addItem(product.id, product.dealPrice, product.title);
+                cart.addItem(product.id, product.dealPrice, product.title,
+                    product.creatorId);
                 // ignore: deprecated_member_use
                 Scaffold.of(context).hideCurrentSnackBar();
                 // ignore: deprecated_member_use

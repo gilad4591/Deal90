@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import './cart.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderItem {
   final String id;
@@ -54,6 +55,8 @@ class Orders with ChangeNotifier {
                   id: item['id'],
                   price: item['price'],
                   title: item['title'],
+                  creator: item['creator'],
+                  productId: item['productId'],
                 ),
               )
               .toList(),
@@ -79,6 +82,8 @@ class Orders with ChangeNotifier {
                     'id': cp.id,
                     'title': cp.title,
                     'price': cp.price,
+                    'creator': cp.creator,
+                    'productId': cp.productId,
                   })
               .toList(),
         },
@@ -93,6 +98,19 @@ class Orders with ChangeNotifier {
         products: cartProuducts,
       ),
     );
+    for (int i = 0; i < cartProuducts.length; i++) {
+      print(cartProuducts[i].creator);
+      await Firestore.instance
+          .collection('ordernotification')
+          .document(cartProuducts[i].creator)
+          .collection('Notifications')
+          .document()
+          .setData({
+        'orderBy': userId,
+        'prodId': cartProuducts[i].productId,
+        'seen': 'false',
+      });
+    }
     notifyListeners();
   }
 }
