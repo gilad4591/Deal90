@@ -14,16 +14,25 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
-var _isLoading = true;
-var currentLoggedInProfile = {
-  'city': '',
-  'date': '',
-  'email': '',
-  'name': '',
-  'phone': '',
-};
+// var _isLoading = false;
+// var currentLoggedInProfile = {
+//   'city': '',
+//   'date': '',
+//   'email': '',
+//   'name': '',
+//   'phone': '',
+// };
 
 class _MainScreenState extends State<MainScreen> {
+  var _isLoading = true;
+  var currentLoggedInProfile = {
+    'city': '',
+    'date': '',
+    'email': '',
+    'name': '',
+    'phone': '',
+  };
+  int numberOfUnreadedNotification = 0;
   Future<void> readData() async {
     final auth = Provider.of<Auth>(context, listen: false);
     final db = Firestore.instance;
@@ -46,6 +55,20 @@ class _MainScreenState extends State<MainScreen> {
         });
       },
     );
+
+    QuerySnapshot querySnapshot = await Firestore.instance
+        .collection("ordernotification")
+        .document(auth.userId)
+        .collection('Notifications')
+        .getDocuments();
+    for (int i = 0; i < querySnapshot.documents.length; i++) {
+      var a = querySnapshot.documents[i];
+      print(a.data);
+      String toCheck = a.data['seen'];
+      if (toCheck == 'false') {
+        numberOfUnreadedNotification++;
+      }
+    }
     if (_isLoading) {
       setState(() {
         _isLoading = false;
@@ -55,47 +78,45 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // numberOfUnreadedNotification = 0;
     readData();
-    // if (_isLoading) {
-    //   CircularProgressIndicator();
-    // }
-    return (_isLoading)
-        ? CircularProgressIndicator()
-        : Scaffold(
-            body: Column(
-              children: <Widget>[
-                ClipPath(
-                  clipper: MyClipper(),
-                  child: Container(
-                    height: 232,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                          Color(0xFF3383CD),
-                          Color(0xFF11249F),
-                        ],
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/party.png"),
-                      ),
-                    ),
-                  ),
+    return Scaffold(
+      body: Column(
+        children: <Widget>[
+          ClipPath(
+            clipper: MyClipper(),
+            child: Container(
+              height: 232,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    Color(0xFF3383CD),
+                    Color(0xFF11249F),
+                  ],
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  height: 60,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(
-                      color: Color(0xFFE5E5E5),
-                    ),
-                  ),
-                  child: Center(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/party.png"),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            height: 60,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: Color(0xFFE5E5E5),
+              ),
+            ),
+            child: (_isLoading)
+                ? CircularProgressIndicator()
+                : Center(
                     child: currentLoggedInProfile['name'].length > 0
                         ? Text(
                             "Welcome Back " + currentLoggedInProfile['name'],
@@ -103,61 +124,63 @@ class _MainScreenState extends State<MainScreen> {
                           )
                         : Text("Welcome"),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ButtonMain('First Button'),
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                        ),
-                        ButtonMain('Second Button'),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          child: ButtonMain('Notification'),
-                          onTap: () {
-                            print("clicked");
-                            Navigator.of(context).pushReplacementNamed(
-                                OrderNotificationScreen.routeName);
-                          },
-                        ),
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                        ),
-                        ButtonMain('Fourth Button'),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            appBar: AppBar(
-              title: Text('Deal90'),
-            ),
-            drawer: AppDrawer(),
-          );
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ButtonMain('First Button', 0),
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                  ),
+                  ButtonMain('Second Button', 0),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  InkWell(
+                    child: ButtonMain(
+                        'Notifications', numberOfUnreadedNotification),
+                    onTap: () {
+                      Navigator.of(context).pushReplacementNamed(
+                          OrderNotificationScreen.routeName);
+                    },
+                  ),
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                  ),
+                  ButtonMain('Fourth Button', 0),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      appBar: AppBar(
+        title: Text('Deal90'),
+      ),
+      drawer: AppDrawer(),
+    );
   }
 }
 
 class ButtonMain extends StatelessWidget {
   final String textButton;
-  const ButtonMain(this.textButton, {Key key}) : super(key: key);
+  final int newNotification;
+  const ButtonMain(this.textButton, this.newNotification, {Key key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -174,8 +197,6 @@ class ButtonMain extends StatelessWidget {
               Color(0xFF3383CD),
               Color(0xFF11249F),
               Colors.black,
-              // Colors.white,
-              // Colors.blue,
             ],
           ),
           boxShadow: [
@@ -188,18 +209,37 @@ class ButtonMain extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: Text(
-            textButton,
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
+          child: newNotification == 0
+              ? Text(
+                  textButton,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '$newNotification',
+                          style: TextStyle(
+                            backgroundColor: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      textButton + '\n',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
         ),
       ),
     );
-    //  <Widget>[
-    // Text(textButton),
-    // ],
   }
 }
 
