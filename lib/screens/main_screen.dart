@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:finalproject/widgets/app_drawer.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:finalproject/models/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finalproject/screens/order_notification_screen.dart';
+import 'package:finalproject/screens/chat_screen.dart';
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key key}) : super(key: key);
@@ -32,6 +34,12 @@ class _MainScreenState extends State<MainScreen> {
     'name': '',
     'phone': '',
   };
+  final List<String> imgList = [
+    'assets/images/party.jpg',
+    'assets/images/hall.jpg',
+    'assets/images/dj.jpg',
+    'assets/images/hall.jpg',
+  ];
   int numberOfUnreadedNotification = 0;
   Future<void> readData() async {
     final auth = Provider.of<Auth>(context, listen: false);
@@ -81,97 +89,152 @@ class _MainScreenState extends State<MainScreen> {
     // numberOfUnreadedNotification = 0;
     readData();
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          ClipPath(
-            clipper: MyClipper(),
-            child: Container(
-              height: 232,
+      body: SingleChildScrollView(
+        // scrollDirection: Axis.horizontal,
+        child: Column(
+          children: <Widget>[
+            ClipPath(
+              clipper: MyClipper(),
+              child: Container(
+                height: 232,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      Color(0xFF3383CD),
+                      Color(0xFF11249F),
+                    ],
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/party.png"),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              height: 60,
               width: double.infinity,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [
-                    Color(0xFF3383CD),
-                    Color(0xFF11249F),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: Color(0xFFE5E5E5),
+                ),
+              ),
+              child: (_isLoading)
+                  ? CircularProgressIndicator()
+                  : Center(
+                      child: currentLoggedInProfile['name'].length > 0
+                          ? Text(
+                              "Welcome Back " + currentLoggedInProfile['name'],
+                              textAlign: TextAlign.center,
+                            )
+                          : Text("Welcome"),
+                    ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      child: ButtonMain(
+                          'Notifications', numberOfUnreadedNotification),
+                      onTap: () {
+                        Navigator.of(context).pushReplacementNamed(
+                            OrderNotificationScreen.routeName);
+                      },
+                    ),
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                    ),
+                    InkWell(
+                      child: ButtonMain('Chat', numberOfUnreadedNotification),
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushReplacementNamed(ChatScreen.routeName);
+                      },
+                    ),
                   ],
                 ),
-                image: DecorationImage(
-                  image: AssetImage("assets/images/party.png"),
+                SizedBox(
+                  height: 10,
                 ),
-              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ButtonMain('Third Button', 0),
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                    ),
+                    ButtonMain('Fourth Button', 0),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                CarouselSliderMain(imgList: imgList),
+              ],
             ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            height: 60,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Color(0xFFE5E5E5),
-              ),
-            ),
-            child: (_isLoading)
-                ? CircularProgressIndicator()
-                : Center(
-                    child: currentLoggedInProfile['name'].length > 0
-                        ? Text(
-                            "Welcome Back " + currentLoggedInProfile['name'],
-                            textAlign: TextAlign.center,
-                          )
-                        : Text("Welcome"),
-                  ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ButtonMain('First Button', 0),
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                  ),
-                  ButtonMain('Second Button', 0),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  InkWell(
-                    child: ButtonMain(
-                        'Notifications', numberOfUnreadedNotification),
-                    onTap: () {
-                      Navigator.of(context).pushReplacementNamed(
-                          OrderNotificationScreen.routeName);
-                    },
-                  ),
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                  ),
-                  ButtonMain('Fourth Button', 0),
-                ],
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
       appBar: AppBar(
         title: Text('Deal90'),
       ),
       drawer: AppDrawer(),
+    );
+  }
+}
+
+class CarouselSliderMain extends StatelessWidget {
+  const CarouselSliderMain({
+    Key key,
+    @required this.imgList,
+  }) : super(key: key);
+
+  final List<String> imgList;
+
+  @override
+  Widget build(BuildContext context) {
+    return CarouselSlider(
+      options: CarouselOptions(
+        autoPlay: true,
+        autoPlayInterval: Duration(seconds: 3),
+        autoPlayAnimationDuration: Duration(milliseconds: 800),
+        autoPlayCurve: Curves.fastOutSlowIn,
+        enlargeCenterPage: true,
+        height: 100.0,
+      ),
+      items: [0, 1, 2, 3].map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.symmetric(horizontal: 5.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: FittedBox(
+                  child: Image.asset(
+                    imgList[i],
+                  ),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            );
+          },
+        );
+      }).toList(),
     );
   }
 }
@@ -186,8 +249,8 @@ class ButtonMain extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        width: 180,
-        height: 120,
+        width: MediaQuery.of(context).size.width * 0.4,
+        height: MediaQuery.of(context).size.height * 0.10,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
