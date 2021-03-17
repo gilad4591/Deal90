@@ -34,18 +34,45 @@ class Notifications extends StatelessWidget {
                 );
               }
               final notificationDocs = notificationSnapshot.data.documents;
-              return ListView.builder(
-                reverse: true,
-                itemCount: notificationDocs.length,
-                itemBuilder: (context, index) => NotificationView(
-                  notificationDocs[index]['orderBy'],
-                  notificationDocs[index]['prodId'],
-                  notificationDocs[index]['seen'],
-                  notificationDocs[index].documentID,
-                ),
-              );
+              return notificationDocs.length == 0
+                  ? NoOrdersYet()
+                  : ListView.builder(
+                      reverse: true,
+                      itemCount: notificationDocs.length,
+                      itemBuilder: (context, index) => NotificationView(
+                        notificationDocs[index]['orderBy'],
+                        notificationDocs[index]['prodId'],
+                        notificationDocs[index]['seen'],
+                        notificationDocs[index].documentID,
+                      ),
+                    );
             });
       },
+    );
+  }
+}
+
+class NoOrdersYet extends StatelessWidget {
+  const NoOrdersYet({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Nothing ordered from you yet ',
+            style: TextStyle(color: Colors.black, fontSize: 18),
+          ),
+          Text(
+            '😔',
+            style: TextStyle(color: Colors.black, fontSize: 24),
+          ),
+        ],
+      ),
     );
   }
 }

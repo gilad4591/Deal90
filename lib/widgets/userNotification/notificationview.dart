@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finalproject/models/auth.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:finalproject/models/auth.dart';
 
 class NotificationView extends StatelessWidget {
@@ -17,9 +18,8 @@ class NotificationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<Auth>(context, listen: false);
-
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
           decoration: BoxDecoration(
@@ -31,7 +31,7 @@ class NotificationView extends StatelessWidget {
               bottomRight: Radius.circular(12),
             ),
           ),
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width * 0.7,
           margin: EdgeInsets.symmetric(
             vertical: 4,
           ),
@@ -65,7 +65,7 @@ class NotificationView extends StatelessWidget {
                         if (seen.contains('false'))
                           SizedBox(
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 100.0),
+                              padding: const EdgeInsets.only(left: 10.0),
                               child: Column(
                                 children: [
                                   Text(
@@ -73,7 +73,7 @@ class NotificationView extends StatelessWidget {
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+                                      fontSize: 12,
                                     ),
                                   ),
                                   ButtonTheme(
@@ -88,11 +88,81 @@ class NotificationView extends StatelessWidget {
                                       child: Icon(Icons.check),
                                     ),
                                   ),
-                                  Text("Mark as read"),
+                                  Text(
+                                    "Mark as read",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                           ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        // WidgetNoName(prodId, user),
+        Container(
+          decoration: BoxDecoration(
+            // color: Colors.blue.opacity(0.0),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
+            ),
+          ),
+          width: MediaQuery.of(context).size.width * 0.3,
+          // height: MediaQuery.of(context).size.height * 0.5,
+          margin: EdgeInsets.symmetric(
+            vertical: 4,
+          ),
+          child: Column(
+            children: <Widget>[
+              FutureBuilder(
+                future: FirebaseDatabase.instance
+                    .reference()
+                    .child('/products/$prodId')
+                    .once()
+                    .then((value) => value.value),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text('Loading...');
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.2,
+                              height: 100.0,
+                              decoration: new BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: new DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: new NetworkImage(
+                                    snapshot.data['imageUrl'],
+                                  ),
+                                ),
+                              ),
+                              // child: Image.network(
+                              //   snapshot.data['imageUrl'],
+                              //   width: 100,
+                              //   height: 100,
+                              // ),
+                            ),
+                            Text(snapshot.data['title']),
+                            Text(snapshot.data['date']),
+                          ],
+                        ),
                       ],
                     ),
                   );
@@ -117,4 +187,14 @@ class NotificationView extends StatelessWidget {
       'seen': 'true',
     });
   }
+}
+
+Future<void> readProductDetails(
+    var prodId, Auth user, var currentProduct) async {
+  var db =
+      FirebaseDatabase.instance.reference().child('/products/$prodId').once();
+  // db.once().then((DataSnapshot snapshot) {
+  //   Map<dynamic, dynamic> values = snapshot.value;
+  //   currentProduct = values;
+  // });
 }
