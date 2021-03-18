@@ -27,16 +27,38 @@ class OrdersScreen extends StatelessWidget {
               return Center(
                 child: Text('An error occurred! please try again'),
               );
-            } else {
-              return Consumer<Orders>(
-                builder: (ctx, orderData, child) => ListView.builder(
-                  itemCount: orderData.orders.length,
-                  itemBuilder: (ctx, i) => OrderItem(orderData.orders[i]),
-                ),
-              );
-            }
+            } else
+              return dataSnapshot.hasData
+                  ? {
+                      Consumer<Orders>(
+                        builder: (ctx, orderData, child) => ListView.builder(
+                          itemCount: orderData.orders.length,
+                          itemBuilder: (ctx, i) =>
+                              OrderItem(orderData.orders[i]),
+                        ),
+                      )
+                    }
+                  : NothingOrderedYet();
           }
         },
+      ),
+    );
+  }
+}
+
+class NothingOrderedYet extends StatelessWidget {
+  const NothingOrderedYet({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        "You didn't order anything yet.",
+        style: TextStyle(
+          fontSize: 20,
+        ),
       ),
     );
   }

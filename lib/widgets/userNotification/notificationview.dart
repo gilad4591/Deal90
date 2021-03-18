@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finalproject/models/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:finalproject/models/auth.dart';
 
 class NotificationView extends StatelessWidget {
   const NotificationView(this.orderBy, this.prodId, this.seen, this.documentId,
@@ -153,11 +152,6 @@ class NotificationView extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              // child: Image.network(
-                              //   snapshot.data['imageUrl'],
-                              //   width: 100,
-                              //   height: 100,
-                              // ),
                             ),
                             Text(snapshot.data['title']),
                             Text(snapshot.data['date']),
@@ -187,14 +181,4 @@ class NotificationView extends StatelessWidget {
       'seen': 'true',
     });
   }
-}
-
-Future<void> readProductDetails(
-    var prodId, Auth user, var currentProduct) async {
-  var db =
-      FirebaseDatabase.instance.reference().child('/products/$prodId').once();
-  // db.once().then((DataSnapshot snapshot) {
-  //   Map<dynamic, dynamic> values = snapshot.value;
-  //   currentProduct = values;
-  // });
 }

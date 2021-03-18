@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:finalproject/widgets/chat/messages.dart';
 import 'package:finalproject/widgets/chat/new_message.dart';
 import 'package:finalproject/widgets/app_drawer.dart';

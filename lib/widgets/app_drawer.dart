@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../screens/orders_screen.dart';
 import 'package:finalproject/screens/user_products_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:finalproject/screens/chat_screen.dart';
 import 'package:finalproject/screens/product_overview_screen.dart';
 
 class AppDrawer extends StatelessWidget {

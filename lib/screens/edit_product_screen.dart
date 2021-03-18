@@ -4,7 +4,6 @@ import 'package:finalproject/providers/product.dart';
 import 'package:finalproject/providers/products.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:finalproject/models/screen_arguments.dart';
 
 class EditProductScreen extends StatefulWidget {

@@ -8,7 +8,6 @@ import '../providers/cart.dart';
 import '../screens/cart_screen.dart';
 import '../widgets/app_drawer.dart';
 import '../providers/products.dart';
-import 'package:finalproject/widgets/deals/search_query.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 enum FilterOptions {
