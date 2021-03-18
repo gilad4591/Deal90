@@ -57,8 +57,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     ).findById(productId);
     loadProfile(loadedProduct.creatorId);
 
-    print(creatorProfile['name']);
-    // return creatorProfile['name'].length > 0 ?
     return Scaffold(
       appBar: AppBar(
         title: Text(loadedProduct.title),
@@ -163,7 +161,7 @@ class CreatorDetailsDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       content: Container(
-        height: 100,
+        height: 150,
         width: 100,
         child: Stack(
           children: <Widget>[
@@ -185,18 +183,24 @@ class CreatorDetailsDialog extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Name: ' + creatorProfile['name'],
-                  ),
+                  creatorProfile['name'].length > 2
+                      ? Text(
+                          'Name: ' + creatorProfile['name'],
+                        )
+                      : Text(''),
                   Text(
                     'Email: ' + creatorProfile['email'],
                   ),
-                  Text(
-                    'Phone: ' + creatorProfile['phone'],
-                  ),
-                  Text(
-                    'City: ' + creatorProfile['city'],
-                  ),
+                  creatorProfile['phone'].length > 2
+                      ? Text(
+                          'Phone: ' + creatorProfile['phone'],
+                        )
+                      : Text(''),
+                  creatorProfile['city'].length > 2
+                      ? Text(
+                          'City: ' + creatorProfile['city'],
+                        )
+                      : Text(''),
                 ],
               ),
             ),
