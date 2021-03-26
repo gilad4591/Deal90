@@ -189,6 +189,7 @@ class _AuthCardState extends State<AuthCard>
           'city': ' ',
           'date': ' ',
           'phone': ' ',
+          'name': ' ',
         });
       }
     } on HttpException catch (error) {
