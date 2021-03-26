@@ -89,7 +89,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     DateTime date;
     if (currentLoggedInProfile['date'] != null) {
       if (!_isLoading) {
-        date = parseDateFormat(currentLoggedInProfile['date']);
+        if (currentLoggedInProfile['date'].length > 1)
+          date = parseDateFormat(currentLoggedInProfile['date']);
       }
     } else {
       date = null;
