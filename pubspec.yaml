@@ -44,6 +44,7 @@ dependencies:
   google_fonts: ^1.1.2
   grouped_buttons: ^1.0.4
   carousel_slider: ^3.0.0
+  font_awesome_flutter: ^8.10.2
 
 
 

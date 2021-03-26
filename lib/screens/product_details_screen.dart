@@ -2,6 +2,7 @@ import 'package:finalproject/providers/products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   static const routeName = '/product-detail';
@@ -210,3 +211,15 @@ class CreatorDetailsDialog extends StatelessWidget {
     );
   }
 }
+
+/*
+Row(
+                    children: <Widget>[
+                      IconButton(
+                          icon: FaIcon(FontAwesomeIcons.whatsappSquare),
+                          onPressed: () {
+                            print("Pressed");
+                          })
+                    ],
+                  )
+                  /*
