@@ -207,8 +207,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               .requestFocus(_originalPriceFocusNode);
                         },
                         validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter a title';
+                          if (!RegExp((r'^[a-zA-Z0-9-!# ]+?$'))
+                              .hasMatch(value)) {
+                            return 'Please enter a valid title, you can use alphabetical,\n digits and -,!,# only.';
                           }
                           return null;
                         },
@@ -378,8 +379,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               category: _editedProduct.category);
                         },
                         validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter a description.';
+                          if (!RegExp((r'^[a-zA-Z0-9-!# ]+?$'))
+                              .hasMatch(value)) {
+                            return 'Please enter a valid description, you can use alphabetical,\n digits and !,#,- only.';
                           }
                           return null;
                         },

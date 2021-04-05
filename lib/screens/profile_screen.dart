@@ -40,11 +40,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'phone': _formKey.currentState.value['Phone'].toString(),
         'name': _formKey.currentState.value['Name'].toString(),
       });
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProductOveviewScreen()),
+      );
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ProductOveviewScreen()),
-    );
   }
 
   var currentLoggedInProfile = {
@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 20,
                 ),
                 Container(
-                  height: 30,
+                  height: MediaQuery.of(context).size.height * 0.05,
                   //color: Colors.grey[200],
                   child: Text(
                     'Email: ' + currentLoggedInProfile['email'],
@@ -136,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 25),
                 Center(
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
+                    height: MediaQuery.of(context).size.height * 0.6,
                     width: MediaQuery.of(context).size.width * 0.95,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -187,10 +187,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             FormBuilderTextWidget(
-                              attributeTextField: 'Phone',
-                              isEnabled: true,
-                              initValue: currentLoggedInProfile['phone'],
-                            ),
+                                attributeTextField: 'Phone',
+                                isEnabled: true,
+                                initValue: currentLoggedInProfile['phone'],
+                                isPhone: true),
                             SizedBox(
                               height: 20,
                             ),
@@ -207,7 +207,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   DateTime parseDateFormat(String currentLoggedInProfile) {
     String curr = currentLoggedInProfile;
-    print(curr);
     var inputFormat = new DateFormat('dd/MM/yyyy');
     var date1 = inputFormat.parse(curr);
     var outputFormat = DateFormat("yyyy-MM-dd");
@@ -219,15 +218,19 @@ class FormBuilderTextWidget extends StatelessWidget {
   final String attributeTextField;
   final bool isEnabled;
   final String initValue;
+  final bool isPhone;
   const FormBuilderTextWidget({
     Key key,
     this.attributeTextField,
     this.isEnabled,
     this.initValue,
+    this.isPhone = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var phonePattern = r'^(05)?[0-9]{8}$';
+    var patternNotSpecialChars = r'^[a-zA-Z-]+(?:\s[a-zA-Z-]+)?$';
     return FormBuilderTextField(
       attribute: attributeTextField,
       initialValue: initValue,
@@ -238,7 +241,18 @@ class FormBuilderTextWidget extends StatelessWidget {
         ),
       ),
       enabled: isEnabled,
-      validators: [FormBuilderValidators.required()],
+      validators: [
+        isPhone
+            ? FormBuilderValidators.pattern(phonePattern,
+                errorText: 'Please enter a valid phone number')
+            : FormBuilderValidators.pattern(patternNotSpecialChars,
+                errorText:
+                    'Please do not use special charecters or multiple spaces.'),
+        FormBuilderValidators.minLength(5,
+            errorText: 'Length should be at least 5 characters'),
+        FormBuilderValidators.maxLength(20,
+            errorText: 'Length should be 20 characters at most'),
+      ],
     );
   }
 }
