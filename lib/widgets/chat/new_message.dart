@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finalproject/models/auth.dart';
 import 'package:provider/provider.dart';
+import 'package:profanity_filter/profanity_filter.dart';
 
 class NewMessage extends StatefulWidget {
   NewMessage({Key key}) : super(key: key);
@@ -12,7 +13,10 @@ class NewMessage extends StatefulWidget {
 
 class _NewMessageState extends State<NewMessage> {
   var _enteredMessage = '';
+  var _badWordUsed = '';
   final _controller = new TextEditingController();
+
+  final filter = ProfanityFilter();
 
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
@@ -21,8 +25,7 @@ class _NewMessageState extends State<NewMessage> {
         .collection('users')
         .document(user.userId)
         .get();
-    // print(user.userId);
-    // print(userData.data['name']);
+    _enteredMessage = filter.censor(_enteredMessage);
     Firestore.instance.collection('chat').add({
       'text': _enteredMessage,
       'createdAt': Timestamp.now(),
