@@ -319,7 +319,7 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
                     _rating = rating;
                     rateUser(widget.creatorProfile);
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  //ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   Navigator.pop(context);
                 },
                 // updateOnDrag: true,
