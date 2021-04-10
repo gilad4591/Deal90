@@ -47,7 +47,7 @@ dependencies:
   profanity_filter: ^1.0.4
   carousel_slider: ^3.0.0
   font_awesome_flutter: ^8.10.2
-  flutter_rating_bar: ^4.0.0
+  flutter_rating_bar: ^3.2.0+1
 
 
 

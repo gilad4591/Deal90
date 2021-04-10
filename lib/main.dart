@@ -1,4 +1,5 @@
 import 'package:finalproject/providers/orders.dart';
+import 'package:finalproject/screens/deal_creator_screen.dart';
 import 'package:flutter/material.dart';
 import './screens/product_overview_screen.dart';
 import './screens/product_details_screen.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
             UserProductScreen.routeName: (ctx) => UserProductScreen(),
             EditProductScreen.routeName: (ctx) => EditProductScreen(),
             ProfileScreen.routeName: (ctx) => ProfileScreen(),
+            DealCreatorScreen.routeName: (ctx) => DealCreatorScreen(),
             ChatScreen.routeName: (ctx) => ChatScreen(),
             OrderNotificationScreen.routeName: (ctx) =>
                 OrderNotificationScreen(),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
+import 'package:finalproject/screens/deal_creator_screen.dart';
 
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:finalproject/models/auth.dart';
@@ -23,6 +24,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     'email': '',
     'name': '',
     'phone': '',
+    'instagram_url': '',
+    'facebook_url': '',
   };
   var _isloading = true;
 
@@ -47,6 +50,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         });
         creatorProfile.update('phone', (v) {
           return documentSnapshot.data['phone'];
+        });
+        creatorProfile.update('instagram_url', (v) {
+          return documentSnapshot.data['instagram_url'];
+        });
+        creatorProfile.update('facebook_url', (v) {
+          return documentSnapshot.data['facebook_url'];
         });
       },
     );
@@ -134,26 +143,52 @@ class CreatorDetailsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-            side: BorderSide(color: Theme.of(context).buttonColor),
+    return Column(
+      children: [
+        ElevatedButton(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+                side: BorderSide(color: Theme.of(context).buttonColor),
+              ),
+            ),
           ),
-        ),
-      ),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CreatorDetailsDialog(creatorProfile: creatorProfile);
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CreatorDetailsDialog(creatorProfile: creatorProfile);
+              },
+            );
           },
-        );
-      },
-      child: Text("Deal creator details"),
+          child: Text("Deal creator details"),
+        ),
+        ElevatedButton(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+                side: BorderSide(color: Theme.of(context).buttonColor),
+              ),
+            ),
+          ),
+          onPressed: () {
+            Navigator.of(context).pushNamed(DealCreatorScreen.routeName,
+                arguments: ScreenArguments(
+                    creatorProfile['name'],
+                    creatorProfile['city'],
+                    creatorProfile['phone'],
+                    creatorProfile['instagram_url'],
+                    creatorProfile['facebook_url']));
+          },
+          child: Text("  Deal Creator Card "),
+        )
+      ],
     );
   }
 }
@@ -319,7 +354,7 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
                     _rating = rating;
                     rateUser(widget.creatorProfile);
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  //ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   Navigator.pop(context);
                 },
                 // updateOnDrag: true,

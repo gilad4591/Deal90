@@ -1,3 +1,4 @@
+import 'package:finalproject/models/screen_arguments.dart';
 import 'package:finalproject/providers/products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,11 +8,13 @@ import '../widgets/app_drawer.dart';
 import 'nm_box.dart';
 
 class DealCreatorScreen extends StatelessWidget {
-  static const routname = '/creator-card';
+  static const routeName = '/creator-card';
 
   @override
   Widget build(BuildContext context) {
+    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text('Deal Creator Card'),
       ),
@@ -22,21 +25,14 @@ class DealCreatorScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    NMButton(icon: Icons.arrow_back),
-                    NMButton(icon: Icons.menu),
-                  ],
-                ),
                 AvatarImage(),
                 SizedBox(height: 15),
                 Text(
-                  'Steven Dz',
+                  args.creator_name,
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  'Amsterdam',
+                  args.creator_city,
                   style: TextStyle(fontWeight: FontWeight.w200),
                 ),
                 SizedBox(height: 15),
@@ -50,120 +46,36 @@ class DealCreatorScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     NMButton(icon: FontAwesomeIcons.facebookF),
-                    SizedBox(width: 25),
-                    NMButton(icon: FontAwesomeIcons.twitter),
+                    SizedBox(
+                      width: 25,
+                    ),
+                    NMButton(icon: FontAwesomeIcons.whatsapp),
                     SizedBox(width: 25),
                     NMButton(icon: FontAwesomeIcons.instagram),
                   ],
                 ),
                 Spacer(),
-                Row(
-                  children: <Widget>[
-                    SocialBox(
-                        icon: FontAwesomeIcons.dribbble,
-                        count: '35',
-                        category: 'shots'),
-                    SizedBox(width: 15),
-                    SocialBox(
-                        icon: FontAwesomeIcons.userAlt,
-                        count: '1.2k',
-                        category: 'followers'),
-                  ],
-                ),
                 SizedBox(height: 20),
-                Row(
-                  children: <Widget>[
-                    SocialBox(
-                        icon: FontAwesomeIcons.heart,
-                        count: '5.1k',
-                        category: 'likes'),
-                    SizedBox(width: 15),
-                    SocialBox(
-                        icon: FontAwesomeIcons.user,
-                        count: '485',
-                        category: 'following'),
-                  ],
-                ),
                 SizedBox(height: 20),
-                Row(
-                  children: <Widget>[
-                    SocialBox(
-                        icon: FontAwesomeIcons.glassWhiskey,
-                        count: '97',
-                        category: 'buckets'),
-                    SizedBox(width: 15),
-                    SocialBox(
-                        icon: FontAwesomeIcons.folderOpen,
-                        count: '7',
-                        category: 'projects'),
-                  ],
-                ),
                 SizedBox(height: 35),
               ],
             ),
           ),
-          DraggableScrollableSheet(
-            initialChildSize: 0.07,
-            minChildSize: 0.07,
-            maxChildSize: 0.4,
-            builder: (BuildContext context, scroll) {
-              return Container(
-                decoration: nMbox,
-                child: ListView(
-                  controller: scroll,
-                  children: <Widget>[
-                    Center(
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Icon(Icons.share, color: fCL),
-                          ),
-                          Text(
-                            'Share',
-                            style: TextStyle(
-                                fontSize: 28, fontWeight: FontWeight.w700),
-                          ),
-                          SizedBox(height: 15),
-                          Text(
-                            'Credits to Planet X on Dribbble\nfor this design',
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 35),
-                          Container(
-                            width: 225,
-                            padding: EdgeInsets.all(10),
-                            decoration: nMboxInvert,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Icon(FontAwesomeIcons.facebookF, color: fCL),
-                                Icon(FontAwesomeIcons.twitter, color: fCL),
-                                Icon(FontAwesomeIcons.instagram, color: fCL),
-                                Icon(FontAwesomeIcons.whatsapp, color: fCL),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 25),
-                          FaIcon(
-                            FontAwesomeIcons.copy,
-                            color: Colors.pink.shade800,
-                          ),
-                          Text(
-                            'Copy link',
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-          )
         ],
       ),
     );
   }
+}
+
+class ScreenArguments {
+  final String creator_name;
+  final String creator_city;
+  final String creator_phone;
+  final String instagram_url;
+  final String facebook_url;
+
+  ScreenArguments(this.creator_name, this.creator_city, this.creator_phone,
+      this.instagram_url, this.facebook_url);
 }
 
 class SocialBox extends StatelessWidget {
@@ -230,7 +142,7 @@ class AvatarImage extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             image: DecorationImage(
-              image: AssetImage('assets/avatar.JPG'),
+              image: AssetImage('assets/images/Deal90Logo2.png'),
             ),
           ),
         ),

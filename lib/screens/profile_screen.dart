@@ -99,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     var now = DateTime.now();
     var today = new DateTime(now.year, now.month, now.day);
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      // resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text('Edit Profile'),
         actions: <Widget>[
