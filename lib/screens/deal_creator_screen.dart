@@ -14,7 +14,7 @@ class DealCreatorScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Deal Creator Card'),
-      )
+      ),
       body: Stack(
         children: <Widget>[
           Padding(
@@ -135,8 +135,7 @@ class DealCreatorScreen extends StatelessWidget {
                             padding: EdgeInsets.all(10),
                             decoration: nMboxInvert,
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 Icon(FontAwesomeIcons.facebookF, color: fCL),
                                 Icon(FontAwesomeIcons.twitter, color: fCL),
@@ -163,11 +162,10 @@ class DealCreatorScreen extends StatelessWidget {
           )
         ],
       ),
-      );
-
+    );
   }
-
 }
+
 class SocialBox extends StatelessWidget {
   final IconData icon;
   final String count;

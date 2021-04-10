@@ -2,6 +2,7 @@ import 'package:finalproject/providers/products.dart';
 import 'package:provider/provider.dart';
 import 'package:finalproject/widgets/product_item.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ProductsGrid extends StatelessWidget {
   final bool showFavorites;
@@ -13,6 +14,8 @@ class ProductsGrid extends StatelessWidget {
       this.dateFilter, this.isFilterByDate);
   @override
   Widget build(BuildContext context) {
+    final dateFormatter = DateFormat("dd/MM/yyyy");
+
     final productsData = Provider.of<Products>(context);
     final productsFav =
         showFavorites ? productsData.favoriteItems : productsData.items;
@@ -22,11 +25,15 @@ class ProductsGrid extends StatelessWidget {
     final filteredProducs = isFilterByDate
         ? (products.where((i) => i.date.toString() == dateFilter).toList())
         : products;
+    final productRelevance = filteredProducs
+        .where((i) => parseDateFormat(i.date).isAfter(DateTime.now()))
+        .toList();
+
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
-      itemCount: filteredProducs.length,
+      itemCount: productRelevance.length,
       itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
-        value: filteredProducs[i],
+        value: productRelevance[i],
         child: ProductItem(),
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -36,5 +43,13 @@ class ProductsGrid extends StatelessWidget {
         mainAxisSpacing: 10,
       ),
     );
+  }
+
+  DateTime parseDateFormat(String currentLoggedInProfile) {
+    String curr = currentLoggedInProfile;
+    var inputFormat = new DateFormat('dd/MM/yyyy');
+    var date1 = inputFormat.parse(curr);
+    var outputFormat = DateFormat("yyyy-MM-dd");
+    return outputFormat.parse("$date1");
   }
 }
