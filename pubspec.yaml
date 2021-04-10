@@ -37,6 +37,7 @@ dependencies:
   firebase_auth: ^0.16.0
   dropdown_search: ^0.4.8
   google_sign_in: ^4.5.9
+  animated_text_kit: ^3.0.1
   http: ^0.12.2
   intl: ^0.16.1
   shared_preferences: ^0.5.3+1

@@ -13,7 +13,6 @@ class NewMessage extends StatefulWidget {
 
 class _NewMessageState extends State<NewMessage> {
   var _enteredMessage = '';
-  var _badWordUsed = '';
   final _controller = new TextEditingController();
 
   final filter = ProfanityFilter();
