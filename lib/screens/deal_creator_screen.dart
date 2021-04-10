@@ -7,11 +7,12 @@ import '../widgets/app_drawer.dart';
 import 'nm_box.dart';
 
 class DealCreatorScreen extends StatelessWidget {
-  static const routname = '/creator-card';
+  static const routeName = '/creator-card';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text('Deal Creator Card'),
       ),
@@ -22,13 +23,6 @@ class DealCreatorScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    NMButton(icon: Icons.arrow_back),
-                    NMButton(icon: Icons.menu),
-                  ],
-                ),
                 AvatarImage(),
                 SizedBox(height: 15),
                 Text(
@@ -50,116 +44,21 @@ class DealCreatorScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     NMButton(icon: FontAwesomeIcons.facebookF),
-                    SizedBox(width: 25),
+                    SizedBox(
+                      width: 25,
+                    ),
                     NMButton(icon: FontAwesomeIcons.twitter),
                     SizedBox(width: 25),
                     NMButton(icon: FontAwesomeIcons.instagram),
                   ],
                 ),
                 Spacer(),
-                Row(
-                  children: <Widget>[
-                    SocialBox(
-                        icon: FontAwesomeIcons.dribbble,
-                        count: '35',
-                        category: 'shots'),
-                    SizedBox(width: 15),
-                    SocialBox(
-                        icon: FontAwesomeIcons.userAlt,
-                        count: '1.2k',
-                        category: 'followers'),
-                  ],
-                ),
                 SizedBox(height: 20),
-                Row(
-                  children: <Widget>[
-                    SocialBox(
-                        icon: FontAwesomeIcons.heart,
-                        count: '5.1k',
-                        category: 'likes'),
-                    SizedBox(width: 15),
-                    SocialBox(
-                        icon: FontAwesomeIcons.user,
-                        count: '485',
-                        category: 'following'),
-                  ],
-                ),
                 SizedBox(height: 20),
-                Row(
-                  children: <Widget>[
-                    SocialBox(
-                        icon: FontAwesomeIcons.glassWhiskey,
-                        count: '97',
-                        category: 'buckets'),
-                    SizedBox(width: 15),
-                    SocialBox(
-                        icon: FontAwesomeIcons.folderOpen,
-                        count: '7',
-                        category: 'projects'),
-                  ],
-                ),
                 SizedBox(height: 35),
               ],
             ),
           ),
-          DraggableScrollableSheet(
-            initialChildSize: 0.07,
-            minChildSize: 0.07,
-            maxChildSize: 0.4,
-            builder: (BuildContext context, scroll) {
-              return Container(
-                decoration: nMbox,
-                child: ListView(
-                  controller: scroll,
-                  children: <Widget>[
-                    Center(
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Icon(Icons.share, color: fCL),
-                          ),
-                          Text(
-                            'Share',
-                            style: TextStyle(
-                                fontSize: 28, fontWeight: FontWeight.w700),
-                          ),
-                          SizedBox(height: 15),
-                          Text(
-                            'Credits to Planet X on Dribbble\nfor this design',
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 35),
-                          Container(
-                            width: 225,
-                            padding: EdgeInsets.all(10),
-                            decoration: nMboxInvert,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Icon(FontAwesomeIcons.facebookF, color: fCL),
-                                Icon(FontAwesomeIcons.twitter, color: fCL),
-                                Icon(FontAwesomeIcons.instagram, color: fCL),
-                                Icon(FontAwesomeIcons.whatsapp, color: fCL),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 25),
-                          FaIcon(
-                            FontAwesomeIcons.copy,
-                            color: Colors.pink.shade800,
-                          ),
-                          Text(
-                            'Copy link',
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-          )
         ],
       ),
     );

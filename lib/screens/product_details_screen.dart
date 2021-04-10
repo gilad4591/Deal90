@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
+import 'package:finalproject/screens/deal_creator_screen.dart';
 
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:finalproject/models/auth.dart';
@@ -134,26 +135,49 @@ class CreatorDetailsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-            side: BorderSide(color: Theme.of(context).buttonColor),
+    return Column(
+      children: [
+        ElevatedButton(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+                side: BorderSide(color: Theme.of(context).buttonColor),
+              ),
+            ),
           ),
-        ),
-      ),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CreatorDetailsDialog(creatorProfile: creatorProfile);
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CreatorDetailsDialog(creatorProfile: creatorProfile);
+              },
+            );
           },
-        );
-      },
-      child: Text("Deal creator details"),
+          child: Text("Deal creator details"),
+        ),
+        ElevatedButton(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+                side: BorderSide(color: Theme.of(context).buttonColor),
+              ),
+            ),
+          ),
+          onPressed: () {
+            Navigator.of(context).pushNamed(
+              DealCreatorScreen.routeName,
+              arguments: creatorProfile,
+            );
+          },
+          child: Text("  Deal Creator Card "),
+        )
+      ],
     );
   }
 }
