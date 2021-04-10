@@ -24,6 +24,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     'email': '',
     'name': '',
     'phone': '',
+    'instagram_url': '',
+    'facebook_url': '',
   };
   var _isloading = true;
 
@@ -48,6 +50,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         });
         creatorProfile.update('phone', (v) {
           return documentSnapshot.data['phone'];
+        });
+        creatorProfile.update('instagram_url', (v) {
+          return documentSnapshot.data['instagram_url'];
+        });
+        creatorProfile.update('facebook_url', (v) {
+          return documentSnapshot.data['facebook_url'];
         });
       },
     );
@@ -170,10 +178,13 @@ class CreatorDetailsButton extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            Navigator.of(context).pushNamed(
-              DealCreatorScreen.routeName,
-              arguments: creatorProfile,
-            );
+            Navigator.of(context).pushNamed(DealCreatorScreen.routeName,
+                arguments: ScreenArguments(
+                    creatorProfile['name'],
+                    creatorProfile['city'],
+                    creatorProfile['phone'],
+                    creatorProfile['instagram_url'],
+                    creatorProfile['facebook_url']));
           },
           child: Text("  Deal Creator Card "),
         )

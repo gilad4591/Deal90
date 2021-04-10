@@ -190,6 +190,8 @@ class _AuthCardState extends State<AuthCard>
           'date': ' ',
           'phone': ' ',
           'name': ' ',
+          'instagram_url': ' ',
+          'facebook_url': ' ',
         });
       }
     } on HttpException catch (error) {

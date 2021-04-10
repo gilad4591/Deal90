@@ -1,3 +1,4 @@
+import 'package:finalproject/models/screen_arguments.dart';
 import 'package:finalproject/providers/products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ class DealCreatorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -26,11 +28,11 @@ class DealCreatorScreen extends StatelessWidget {
                 AvatarImage(),
                 SizedBox(height: 15),
                 Text(
-                  'Steven Dz',
+                  args.creator_name,
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  'Amsterdam',
+                  args.creator_city,
                   style: TextStyle(fontWeight: FontWeight.w200),
                 ),
                 SizedBox(height: 15),
@@ -47,7 +49,7 @@ class DealCreatorScreen extends StatelessWidget {
                     SizedBox(
                       width: 25,
                     ),
-                    NMButton(icon: FontAwesomeIcons.twitter),
+                    NMButton(icon: FontAwesomeIcons.whatsapp),
                     SizedBox(width: 25),
                     NMButton(icon: FontAwesomeIcons.instagram),
                   ],
@@ -63,6 +65,17 @@ class DealCreatorScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class ScreenArguments {
+  final String creator_name;
+  final String creator_city;
+  final String creator_phone;
+  final String instagram_url;
+  final String facebook_url;
+
+  ScreenArguments(this.creator_name, this.creator_city, this.creator_phone,
+      this.instagram_url, this.facebook_url);
 }
 
 class SocialBox extends StatelessWidget {
@@ -129,7 +142,7 @@ class AvatarImage extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             image: DecorationImage(
-              image: AssetImage('assets/avatar.JPG'),
+              image: AssetImage('assets/images/Deal90Logo2.png'),
             ),
           ),
         ),
