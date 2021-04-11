@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/app_drawer.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key}) : super(key: key);
@@ -25,7 +26,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _saveForm() async {
     final auth = Provider.of<Auth>(context, listen: false);
     if (_formKey.currentState.saveAndValidate()) {
-      print(_formKey.currentState.value);
       var date;
       if (_formKey.currentState.value['date'] is DateTime) {
         date = DateFormat("dd/MM/yyyy")
@@ -39,6 +39,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'city': _formKey.currentState.value['City'].toString(),
         'phone': _formKey.currentState.value['Phone'].toString(),
         'name': _formKey.currentState.value['Name'].toString(),
+        'facebook_url': _formKey.currentState.value['facebook_url'].toString(),
+        'instagram_url':
+            _formKey.currentState.value['instagram_url'].toString(),
+        'bio': _formKey.currentState.value['bio'].toString(),
       });
       Navigator.push(
         context,
@@ -53,6 +57,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'email': '',
     'name': '',
     'phone': '',
+    'facebook_url': '',
+    'instagram_url': '',
+    'bio': '',
   };
   Future<void> readData() async {
     final auth = Provider.of<Auth>(context, listen: false);
@@ -73,6 +80,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
         currentLoggedInProfile.update('phone', (v) {
           return documentSnapshot.data['phone'];
+        });
+        currentLoggedInProfile.update('facebook_url', (v) {
+          return documentSnapshot.data['facebook_url'];
+        });
+        currentLoggedInProfile.update('instagram_url', (v) {
+          return documentSnapshot.data['instagram_url'];
+        });
+        currentLoggedInProfile.update('bio', (v) {
+          return documentSnapshot.data['bio'];
         });
       },
     );
@@ -114,95 +130,139 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : Column(
-              children: [
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.05,
-                  //color: Colors.grey[200],
-                  child: Text(
-                    'Email: ' + currentLoggedInProfile['email'],
-                    style: GoogleFonts.robotoMono(
-                      textStyle: TextStyle(
-                        fontSize: 18,
-                        color: Colors.blueAccent,
-                        //fontWeight: FontWeight.bold,
-                      ),
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                    //color: Colors.grey[200],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.email,
+                          color: Colors.blueAccent,
+                        ),
+                        Text(
+                          ' Email: ' + currentLoggedInProfile['email'],
+                          style: GoogleFonts.robotoMono(
+                            textStyle: TextStyle(
+                              fontSize: 18,
+                              color: Colors.blueAccent,
+                              //fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                SizedBox(height: 10),
-                Center(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.6,
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              // color: Colors.black.withOpacity(0.2),
-                              // spreadRadius: 5,
-                              // blurRadius: 7,
-                              // offset: Offset(0, 3),
-                              ),
-                        ],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: FormBuilder(
-                          key: _formKey,
-                          child: Column(
-                            children: <Widget>[
-                              FormBuilderTextWidget(
-                                attributeTextField: 'Name',
-                                isEnabled: true,
-                                initValue: currentLoggedInProfile['name'],
-                              ),
-                              FormBuilderTextWidget(
-                                attributeTextField: 'City',
-                                isEnabled: true,
-                                initValue: currentLoggedInProfile['city'],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Container(
-                                height: 50,
-                                child: FormBuilderDateTimePicker(
-                                  attribute: "date",
-                                  inputType: InputType.date,
-                                  firstDate: today,
-                                  format: DateFormat("dd/MM/yyyy"),
-                                  initialValue: date,
-                                  decoration: InputDecoration(
-                                    labelText: "Event date",
-                                    labelStyle: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: 14,
+                  SizedBox(height: 10),
+                  Center(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(),
+                          ],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: FormBuilder(
+                            key: _formKey,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: <Widget>[
+                                  FormBuilderTextWidget(
+                                    icon: Icon(Icons.perm_identity),
+                                    attributeTextField: 'Name',
+                                    isEnabled: true,
+                                    initValue: currentLoggedInProfile['name'],
+                                  ),
+                                  FormBuilderTextWidget(
+                                    icon: Icon(Icons.location_city),
+                                    attributeTextField: 'City',
+                                    isEnabled: true,
+                                    initValue: currentLoggedInProfile['city'],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Container(
+                                    height: 50,
+                                    child: FormBuilderDateTimePicker(
+                                      attribute: "date",
+                                      inputType: InputType.date,
+                                      firstDate: today,
+                                      format: DateFormat("dd/MM/yyyy"),
+                                      initialValue: date,
+                                      decoration: InputDecoration(
+                                        icon:
+                                            Icon(Icons.calendar_today_rounded),
+                                        labelText: "Event date",
+                                        labelStyle: TextStyle(
+                                          color: Colors.blueAccent,
+                                          fontSize: 14,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  FormBuilderTextWidget(
+                                    attributeTextField: 'Phone',
+                                    isEnabled: true,
+                                    initValue: currentLoggedInProfile['phone'],
+                                    isPhone: true,
+                                    icon: Icon(Icons.phone),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  FormBuilderTextWidgetURL(
+                                    attributeTextField: 'instagram_url',
+                                    initValue:
+                                        currentLoggedInProfile['instagram_url'],
+                                    labelTextField: 'Instagram URL',
+                                    icon: Icon(FontAwesomeIcons.instagram),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  FormBuilderTextWidgetURL(
+                                    attributeTextField: 'facebook_url',
+                                    initValue:
+                                        currentLoggedInProfile['facebook_url'],
+                                    labelTextField: 'Facebook URL',
+                                    icon: Icon(FontAwesomeIcons.facebook),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  FormBuilderTextWidgetBio(
+                                    attributeTextField: 'bio',
+                                    initValue: currentLoggedInProfile['bio'],
+                                    icon: Icon(Icons.contact_page),
+                                    labelTextField: 'bio',
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                ],
                               ),
-                              FormBuilderTextWidget(
-                                  attributeTextField: 'Phone',
-                                  isEnabled: true,
-                                  initValue: currentLoggedInProfile['phone'],
-                                  isPhone: true),
-                              SizedBox(
-                                height: 20,
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }
@@ -221,12 +281,14 @@ class FormBuilderTextWidget extends StatelessWidget {
   final bool isEnabled;
   final String initValue;
   final bool isPhone;
+  final Icon icon;
   const FormBuilderTextWidget({
     Key key,
     this.attributeTextField,
     this.isEnabled,
     this.initValue,
     this.isPhone = false,
+    this.icon,
   }) : super(key: key);
 
   @override
@@ -237,6 +299,7 @@ class FormBuilderTextWidget extends StatelessWidget {
       attribute: attributeTextField,
       initialValue: initValue,
       decoration: InputDecoration(
+        icon: icon,
         labelText: attributeTextField,
         labelStyle: TextStyle(
           color: Colors.blueAccent,
@@ -254,6 +317,86 @@ class FormBuilderTextWidget extends StatelessWidget {
             errorText: 'Length should be at least 5 characters'),
         FormBuilderValidators.maxLength(20,
             errorText: 'Length should be 20 characters at most'),
+      ],
+    );
+  }
+}
+
+class FormBuilderTextWidgetURL extends StatelessWidget {
+  final String attributeTextField;
+  final String initValue;
+  final String labelTextField;
+  final Icon icon;
+  const FormBuilderTextWidgetURL({
+    Key key,
+    this.attributeTextField,
+    this.initValue,
+    this.labelTextField,
+    this.icon,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FormBuilderTextField(
+      attribute: attributeTextField,
+      initialValue: initValue,
+      decoration: InputDecoration(
+        icon: icon,
+        labelText: labelTextField,
+        labelStyle: TextStyle(
+          color: Colors.blueAccent,
+        ),
+      ),
+      enabled: true,
+      validators: [
+        FormBuilderValidators.minLength(3,
+            errorText: 'Length should be at least 5 characters'),
+        // FormBuilderValidators.maxLength(30,
+        // errorText: 'Length should be 20 characters at most'),
+        FormBuilderValidators.url(errorText: 'Please enter valid url'),
+      ],
+    );
+  }
+}
+
+class FormBuilderTextWidgetBio extends StatelessWidget {
+  final String attributeTextField;
+  final String initValue;
+  final String labelTextField;
+  final Icon icon;
+  const FormBuilderTextWidgetBio({
+    Key key,
+    this.attributeTextField,
+    this.initValue,
+    this.labelTextField,
+    this.icon,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var patternNotSpecialChars = r'^[a-zA-Z0-9_\-\"=@,\.; ]+$';
+
+    return FormBuilderTextField(
+      attribute: attributeTextField,
+      initialValue: initValue,
+      minLines: 1,
+      maxLines: 4,
+      decoration: InputDecoration(
+        icon: icon,
+        labelText: labelTextField,
+        labelStyle: TextStyle(
+          color: Colors.blueAccent,
+        ),
+      ),
+      enabled: true,
+      validators: [
+        // FormBuilderValidators.minLength(3,
+        // errorText: 'Length should be at least 5 characters'),
+        FormBuilderValidators.maxLength(200,
+            errorText: 'Length should be 200 characters at most'),
+        FormBuilderValidators.pattern(patternNotSpecialChars,
+            errorText:
+                'Please do not use special charecters or multiple spaces.'),
       ],
     );
   }

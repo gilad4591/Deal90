@@ -26,6 +26,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     'phone': '',
     'instagram_url': '',
     'facebook_url': '',
+    'bio': '',
   };
   var _isloading = true;
 
@@ -56,6 +57,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         });
         creatorProfile.update('facebook_url', (v) {
           return documentSnapshot.data['facebook_url'];
+        });
+        creatorProfile.update('bio', (v) {
+          return documentSnapshot.data['bio'];
         });
       },
     );
@@ -178,13 +182,18 @@ class CreatorDetailsButton extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            Navigator.of(context).pushNamed(DealCreatorScreen.routeName,
-                arguments: ScreenArguments(
-                    creatorProfile['name'],
-                    creatorProfile['city'],
-                    creatorProfile['phone'],
-                    creatorProfile['instagram_url'],
-                    creatorProfile['facebook_url']));
+            Navigator.of(context).pushNamed(
+              DealCreatorScreen.routeName,
+              arguments: ScreenArguments(
+                creatorProfile['name'],
+                creatorProfile['city'],
+                creatorProfile['phone'],
+                creatorProfile['instagram_url'],
+                creatorProfile['facebook_url'],
+                creatorProfile['email'],
+                creatorProfile['bio'],
+              ),
+            );
           },
           child: Text("  Deal Creator Card "),
         )

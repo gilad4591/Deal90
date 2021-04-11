@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/app_drawer.dart';
 import 'nm_box.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DealCreatorScreen extends StatelessWidget {
   static const routeName = '/creator-card';
@@ -28,16 +29,16 @@ class DealCreatorScreen extends StatelessWidget {
                 AvatarImage(),
                 SizedBox(height: 15),
                 Text(
-                  args.creator_name,
+                  args.creatorName,
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  args.creator_city,
+                  args.creatorCity,
                   style: TextStyle(fontWeight: FontWeight.w200),
                 ),
                 SizedBox(height: 15),
                 Text(
-                  'Mobile App Developer and Game Designer',
+                  args.bio ?? '',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20),
                 ),
@@ -45,13 +46,45 @@ class DealCreatorScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    NMButton(icon: FontAwesomeIcons.facebookF),
+                    GestureDetector(
+                      child: NMButton(
+                        icon: FontAwesomeIcons.facebookF,
+                        color: args.creatorFacebookURL != null
+                            ? Colors.blue
+                            : Colors.grey,
+                      ),
+                      onTap: () {
+                        _launchURL(args.creatorFacebookURL);
+                      },
+                    ),
                     SizedBox(
                       width: 25,
                     ),
-                    NMButton(icon: FontAwesomeIcons.whatsapp),
+                    GestureDetector(
+                      child: NMButton(
+                        icon: FontAwesomeIcons.whatsapp,
+                        color: args.creatorPhone != null
+                            ? Colors.lightGreenAccent[400]
+                            : Colors.grey,
+                      ),
+                      onTap: () {
+                        _launchURL('https://wa.me/972' +
+                            args.creatorPhone
+                                .substring(1, args.creatorPhone.length - 1));
+                      },
+                    ),
                     SizedBox(width: 25),
-                    NMButton(icon: FontAwesomeIcons.instagram),
+                    GestureDetector(
+                      child: NMButton(
+                        icon: FontAwesomeIcons.instagram,
+                        color: args.creatorInstagramURL != null
+                            ? Colors.pink[400]
+                            : Colors.grey,
+                      ),
+                      onTap: () {
+                        _launchURL(args.creatorInstagramURL);
+                      },
+                    ),
                   ],
                 ),
                 Spacer(),
@@ -68,14 +101,22 @@ class DealCreatorScreen extends StatelessWidget {
 }
 
 class ScreenArguments {
-  final String creator_name;
-  final String creator_city;
-  final String creator_phone;
-  final String instagram_url;
-  final String facebook_url;
+  final String creatorName;
+  final String creatorCity;
+  final String creatorPhone;
+  final String creatorInstagramURL;
+  final String creatorFacebookURL;
+  final String creatorEmail;
+  final String bio;
 
-  ScreenArguments(this.creator_name, this.creator_city, this.creator_phone,
-      this.instagram_url, this.facebook_url);
+  ScreenArguments(
+      this.creatorName,
+      this.creatorCity,
+      this.creatorPhone,
+      this.creatorInstagramURL,
+      this.creatorFacebookURL,
+      this.creatorEmail,
+      this.bio);
 }
 
 class SocialBox extends StatelessWidget {
@@ -103,6 +144,14 @@ class SocialBox extends StatelessWidget {
             Text(
               category,
             ),
+            SizedBox(width: 3),
+            Text(
+              category,
+            ),
+            SizedBox(width: 3),
+            Text(
+              category,
+            ),
           ],
         ),
       ),
@@ -112,7 +161,11 @@ class SocialBox extends StatelessWidget {
 
 class NMButton extends StatelessWidget {
   final IconData icon;
-  const NMButton({this.icon});
+  final Color color;
+  const NMButton({
+    this.icon,
+    this.color,
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -121,9 +174,19 @@ class NMButton extends StatelessWidget {
       decoration: nMbox,
       child: Icon(
         icon,
-        color: fCL,
+        color: color,
       ),
     );
+  }
+}
+
+_launchURL(String url) async {
+  print('entered launch url');
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    print(url);
+    return;
   }
 }
 
