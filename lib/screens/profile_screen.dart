@@ -1,6 +1,5 @@
 import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/screens/product_overview_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -9,6 +8,10 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/app_drawer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key}) : super(key: key);
@@ -20,8 +23,16 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   var _isLoading = true;
+  File _pickedImage;
   final _formKey = GlobalKey<FormBuilderState>();
-  final snackBar = SnackBar(content: Text('Profile updated successfully'));
+
+  void _pickImage() async {
+    final pickedImageFile =
+        await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _pickedImage = pickedImageFile;
+    });
+  }
 
   Future<void> _saveForm() async {
     final auth = Provider.of<Auth>(context, listen: false);
@@ -31,6 +42,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         date = DateFormat("dd/MM/yyyy")
             .format(_formKey.currentState.value['date']);
       }
+      // print(auth.token);
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('user_image')
+          .child(auth.userId + '.jpg');
+
+      await ref.putFile(_pickedImage).onComplete;
       await Firestore.instance
           .collection('users')
           .document(auth.userId)
@@ -50,6 +68,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
+
+  final _scrollController = ScrollController();
 
   var currentLoggedInProfile = {
     'city': '',
@@ -130,138 +150,143 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    //color: Colors.grey[200],
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.email,
-                          color: Colors.blueAccent,
-                        ),
-                        Text(
-                          ' Email: ' + currentLoggedInProfile['email'],
-                          style: GoogleFonts.robotoMono(
-                            textStyle: TextStyle(
-                              fontSize: 18,
-                              color: Colors.blueAccent,
-                              //fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
+          : Scrollbar(
+              thickness: 10,
+              controller: _scrollController,
+              isAlwaysShown: true,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Center(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.7,
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(),
-                          ],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: FormBuilder(
-                            key: _formKey,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: <Widget>[
-                                  FormBuilderTextWidget(
-                                    icon: Icon(Icons.perm_identity),
-                                    attributeTextField: 'Name',
-                                    isEnabled: true,
-                                    initValue: currentLoggedInProfile['name'],
-                                  ),
-                                  FormBuilderTextWidget(
-                                    icon: Icon(Icons.location_city),
-                                    attributeTextField: 'City',
-                                    isEnabled: true,
-                                    initValue: currentLoggedInProfile['city'],
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    height: 50,
-                                    child: FormBuilderDateTimePicker(
-                                      attribute: "date",
-                                      inputType: InputType.date,
-                                      firstDate: today,
-                                      format: DateFormat("dd/MM/yyyy"),
-                                      initialValue: date,
-                                      decoration: InputDecoration(
-                                        icon:
-                                            Icon(Icons.calendar_today_rounded),
-                                        labelText: "Event date",
-                                        labelStyle: TextStyle(
-                                          color: Colors.blueAccent,
-                                          fontSize: 14,
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.grey,
+                      backgroundImage:
+                          _pickedImage != null ? FileImage(_pickedImage) : null,
+                    ),
+                    FlatButton.icon(
+                      textColor: Theme.of(context).primaryColor,
+                      label: Text('Add Image'),
+                      icon: Icon(Icons.image),
+                      onPressed: _pickImage,
+                      // icon: Icon(Icons.image),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: SingleChildScrollView(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(),
+                            ],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: FormBuilder(
+                              key: _formKey,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: <Widget>[
+                                    // FormBuilderTextWidget(
+                                    //   icon: Icon(Icons.email),
+                                    //   attributeTextField: 'Email',
+                                    //   isEnabled: false,
+                                    //   initValue:
+                                    //       currentLoggedInProfile['email'],
+                                    // ),
+                                    FormBuilderTextWidget(
+                                      icon: Icon(Icons.perm_identity),
+                                      attributeTextField: 'Name',
+                                      isEnabled: true,
+                                      initValue: currentLoggedInProfile['name'],
+                                    ),
+                                    FormBuilderTextWidget(
+                                      icon: Icon(Icons.location_city),
+                                      attributeTextField: 'City',
+                                      isEnabled: true,
+                                      initValue: currentLoggedInProfile['city'],
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Container(
+                                      height: 50,
+                                      child: FormBuilderDateTimePicker(
+                                        attribute: "date",
+                                        inputType: InputType.date,
+                                        firstDate: today,
+                                        format: DateFormat("dd/MM/yyyy"),
+                                        initialValue: date,
+                                        decoration: InputDecoration(
+                                          icon: Icon(
+                                              Icons.calendar_today_rounded),
+                                          labelText: "Event date",
+                                          labelStyle: TextStyle(
+                                            color: Colors.blueAccent,
+                                            fontSize: 14,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  FormBuilderTextWidget(
-                                    attributeTextField: 'Phone',
-                                    isEnabled: true,
-                                    initValue: currentLoggedInProfile['phone'],
-                                    isPhone: true,
-                                    icon: Icon(Icons.phone),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  FormBuilderTextWidgetURL(
-                                    attributeTextField: 'instagram_url',
-                                    initValue:
-                                        currentLoggedInProfile['instagram_url'],
-                                    labelTextField: 'Instagram URL',
-                                    icon: Icon(FontAwesomeIcons.instagram),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  FormBuilderTextWidgetURL(
-                                    attributeTextField: 'facebook_url',
-                                    initValue:
-                                        currentLoggedInProfile['facebook_url'],
-                                    labelTextField: 'Facebook URL',
-                                    icon: Icon(FontAwesomeIcons.facebook),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  FormBuilderTextWidgetBio(
-                                    attributeTextField: 'bio',
-                                    initValue: currentLoggedInProfile['bio'],
-                                    icon: Icon(Icons.contact_page),
-                                    labelTextField: 'bio',
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
+                                    FormBuilderTextWidget(
+                                      attributeTextField: 'Phone',
+                                      isEnabled: true,
+                                      initValue:
+                                          currentLoggedInProfile['phone'],
+                                      isPhone: true,
+                                      icon: Icon(Icons.phone),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    FormBuilderTextWidgetURL(
+                                      attributeTextField: 'instagram_url',
+                                      initValue: currentLoggedInProfile[
+                                          'instagram_url'],
+                                      labelTextField: 'Instagram URL',
+                                      icon: Icon(FontAwesomeIcons.instagram),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    FormBuilderTextWidgetURL(
+                                      attributeTextField: 'facebook_url',
+                                      initValue: currentLoggedInProfile[
+                                          'facebook_url'],
+                                      labelTextField: 'Facebook URL',
+                                      icon: Icon(FontAwesomeIcons.facebook),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    FormBuilderTextWidgetBio(
+                                      attributeTextField: 'bio',
+                                      initValue: currentLoggedInProfile['bio'],
+                                      icon: Icon(Icons.contact_page),
+                                      labelTextField: 'bio',
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
     );
@@ -295,6 +320,8 @@ class FormBuilderTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var phonePattern = r'^(05)?[0-9]{8}$';
     var patternNotSpecialChars = r'^[a-zA-Z-]+(?:\s[a-zA-Z-]+)?$';
+    Color color;
+    isEnabled ? color = Colors.blueAccent : color = Colors.grey;
     return FormBuilderTextField(
       attribute: attributeTextField,
       initialValue: initValue,
@@ -302,10 +329,10 @@ class FormBuilderTextWidget extends StatelessWidget {
         icon: icon,
         labelText: attributeTextField,
         labelStyle: TextStyle(
-          color: Colors.blueAccent,
+          color: color,
         ),
       ),
-      enabled: isEnabled,
+      readOnly: !isEnabled,
       validators: [
         isPhone
             ? FormBuilderValidators.pattern(phonePattern,

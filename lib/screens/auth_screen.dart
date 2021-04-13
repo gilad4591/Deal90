@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/services.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -195,17 +195,14 @@ class _AuthCardState extends State<AuthCard>
           'facebook_url': ' ',
         });
       }
-    } on HttpException catch (error) {
-      var errorMessage = 'Authentication failed';
-      if (error.toString().contains('EMAIL_EXISTS')) {
+    } on PlatformException catch (error) {
+      var errorMessage = error.message;
+      print(errorMessage);
+      if (error.toString().contains('another account')) {
         errorMessage = 'This email address is already in use.';
-      } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This is not a valid email address';
-      } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak.';
-      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+      } else if (error.toString().contains('corresponding')) {
         errorMessage = 'Could not find a user with that email.';
-      } else if (error.toString().contains('INVALID_PASSWORD')) {
+      } else if (error.toString().contains('is invalid')) {
         errorMessage = 'Invalid password.';
       }
       _showErrorDialog(errorMessage);
@@ -214,6 +211,26 @@ class _AuthCardState extends State<AuthCard>
           'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
     }
+
+    // } on HttpException catch (error) {
+    //   var errorMessage = 'Authentication failed';
+    //   if (error.toString().contains('EMAIL_EXISTS')) {
+    //     errorMessage = 'This email address is already in use.';
+    //   } else if (error.toString().contains('INVALID_EMAIL')) {
+    //     errorMessage = 'This is not a valid email address';
+    //   } else if (error.toString().contains('WEAK_PASSWORD')) {
+    //     errorMessage = 'This password is too weak.';
+    //   } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+    //     errorMessage = 'Could not find a user with that email.';
+    //   } else if (error.toString().contains('INVALID_PASSWORD')) {
+    //     errorMessage = 'Invalid password.';
+    //   }
+    //   _showErrorDialog(errorMessage);
+    // } catch (error) {
+    //   const errorMessage =
+    //       'Could not authenticate you. Please try again later.';
+    //   _showErrorDialog(errorMessage);
+    // }
 
     setState(() {
       _isLoading = false;
