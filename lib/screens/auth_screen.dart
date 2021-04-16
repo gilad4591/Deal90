@@ -1,6 +1,6 @@
 // import 'dart:math';
 import 'package:finalproject/models/auth.dart';
-import 'package:finalproject/models/http_exception.dart';
+// import 'package:finalproject/models/http_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -193,6 +193,8 @@ class _AuthCardState extends State<AuthCard>
           'name': ' ',
           'instagram_url': ' ',
           'facebook_url': ' ',
+          'profileImageURL':
+              'https://firebasestorage.googleapis.com/v0/b/finalproject-52a7e.appspot.com/o/user_image%2Fdefimage.jpg?alt=media&token=937de49b-8e2b-40f4-93aa-158f29c833e2',
         });
       }
     } on PlatformException catch (error) {

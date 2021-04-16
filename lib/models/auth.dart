@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../models/http_exception.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import '../models/http_exception.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -32,8 +32,8 @@ class Auth with ChangeNotifier {
 
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
-    final url =
-        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyB_ImEcGl5PrubtLAMqVKCmxO5r3jZBMM0';
+    // final url =
+    //     'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyB_ImEcGl5PrubtLAMqVKCmxO5r3jZBMM0';
     AuthResult authResult;
     try {
       if (urlSegment == 'signInWithPassword')

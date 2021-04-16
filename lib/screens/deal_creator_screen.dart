@@ -1,10 +1,10 @@
-import 'package:finalproject/models/screen_arguments.dart';
-import 'package:finalproject/providers/products.dart';
+// import 'package:finalproject/models/screen_arguments.dart';
+// import 'package:finalproject/providers/products.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:provider/provider.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../widgets/app_drawer.dart';
+// import '../widgets/app_drawer.dart';
 import 'nm_box.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,7 +26,7 @@ class DealCreatorScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                AvatarImage(),
+                AvatarImage(profileImageURL: args.profileImageURL),
                 SizedBox(height: 15),
                 Text(
                   args.creatorName,
@@ -108,6 +108,7 @@ class ScreenArguments {
   final String creatorFacebookURL;
   final String creatorEmail;
   final String bio;
+  final String profileImageURL;
 
   ScreenArguments(
       this.creatorName,
@@ -116,7 +117,8 @@ class ScreenArguments {
       this.creatorInstagramURL,
       this.creatorFacebookURL,
       this.creatorEmail,
-      this.bio);
+      this.bio,
+      this.profileImageURL);
 }
 
 class SocialBox extends StatelessWidget {
@@ -191,6 +193,9 @@ _launchURL(String url) async {
 }
 
 class AvatarImage extends StatelessWidget {
+  final String profileImageURL;
+  const AvatarImage({Key key, this.profileImageURL});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -205,7 +210,8 @@ class AvatarImage extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             image: DecorationImage(
-              image: AssetImage('assets/images/Deal90Logo2.png'),
+              fit: BoxFit.fill,
+              image: NetworkImage(profileImageURL),
             ),
           ),
         ),

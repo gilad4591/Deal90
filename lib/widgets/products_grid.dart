@@ -14,7 +14,7 @@ class ProductsGrid extends StatelessWidget {
       this.dateFilter, this.isFilterByDate);
   @override
   Widget build(BuildContext context) {
-    final dateFormatter = DateFormat("dd/MM/yyyy");
+    // final dateFormatter = DateFormat("dd/MM/yyyy");
 
     final productsData = Provider.of<Products>(context);
     final productsFav =

@@ -2,8 +2,8 @@ import 'package:finalproject/providers/products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'dart:io';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'dart:io';
 import 'package:finalproject/screens/deal_creator_screen.dart';
 
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -27,6 +27,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     'instagram_url': '',
     'facebook_url': '',
     'bio': '',
+    'profileImageURL': '',
   };
   var _isloading = true;
 
@@ -60,6 +61,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         });
         creatorProfile.update('bio', (v) {
           return documentSnapshot.data['bio'];
+        });
+        creatorProfile.update('profileImageURL', (v) {
+          return documentSnapshot.data['profileImageURL'];
         });
       },
     );
@@ -168,7 +172,7 @@ class CreatorDetailsButton extends StatelessWidget {
               },
             );
           },
-          child: Text("Deal creator details"),
+          child: Text("Rate Me!"),
         ),
         ElevatedButton(
           style: ButtonStyle(
@@ -192,6 +196,7 @@ class CreatorDetailsButton extends StatelessWidget {
                 creatorProfile['facebook_url'],
                 creatorProfile['email'],
                 creatorProfile['bio'],
+                creatorProfile['profileImageURL'],
               ),
             );
           },
@@ -214,7 +219,7 @@ class CreatorDetailsDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       content: Container(
-        height: MediaQuery.of(context).size.height * 0.3,
+        height: MediaQuery.of(context).size.height * 0.15,
         width: MediaQuery.of(context).size.width * 0.7,
         child: Stack(
           children: <Widget>[
@@ -256,27 +261,6 @@ class DisplayCreatorDetailsWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        creatorProfile['name'].length > 2
-            ? Text(
-                'Name: ' + creatorProfile['name'],
-              )
-            : Text(''),
-        Text(
-          'Email: ' + creatorProfile['email'],
-        ),
-        creatorProfile['phone'].length > 2
-            ? Text(
-                'Phone: ' + creatorProfile['phone'],
-              )
-            : Text(''),
-        creatorProfile['city'].length > 2
-            ? Text(
-                'City: ' + creatorProfile['city'],
-              )
-            : Text(''),
-        SizedBox(
-          height: 20,
-        ),
         RatingBarCreator(creatorProfile: creatorProfile),
       ],
     );
@@ -292,14 +276,11 @@ class RatingBarCreator extends StatefulWidget {
 }
 
 class _RatingBarCreatorState extends State<RatingBarCreator> {
-  var _ratingController;
+  // var _ratingController;
   double _rating;
-  double _userRating = 3.0;
-  int _ratingBarMode = 1;
   double _initialRating = 0;
-  bool _isRTLMode = false;
   bool _isVertical = false;
-  IconData _selectedIcon;
+
   var _isLoading = true;
   final snackBar = SnackBar(
     content: Text('You have rated this user succesfully!'),
@@ -308,7 +289,7 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
   @override
   void initState() {
     super.initState();
-    _ratingController = TextEditingController(text: '0.0');
+    // _ratingController = TextEditingController(text: '0.0');
     _rating = _initialRating;
   }
 
@@ -363,7 +344,7 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
                     _rating = rating;
                     rateUser(widget.creatorProfile);
                   });
-                  //ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   Navigator.pop(context);
                 },
                 // updateOnDrag: true,
@@ -373,10 +354,11 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
   }
 
   Future<void> readRatingData(Map<String, String> creatorProfile) async {
-    var currentRating = 0.0;
     var averageRating = 0.0;
+    // ignore: unused_local_variable
     var sumRating;
     var numberRaters = 0;
+    // ignore: unused_local_variable
     var myRating = -1.0;
     final auth = Provider.of<Auth>(context, listen: false);
     final dbGeneralRating = Firestore.instance;
@@ -419,6 +401,7 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
     final auth = Provider.of<Auth>(context, listen: false);
     var oldRating = 0.0;
     var newRating = _rating;
+    // ignore: unused_local_variable
     var averageRating = 0.0;
     var sumRating = 0.0;
     var numberRaters = 0;

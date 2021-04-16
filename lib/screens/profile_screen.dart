@@ -11,7 +11,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key}) : super(key: key);
@@ -27,9 +27,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   void _pickImage() async {
+    _isLoading = true;
     final pickedImageFile =
+        // ignore: deprecated_member_use
         await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
+      _isLoading = false;
       _pickedImage = pickedImageFile;
     });
   }
@@ -42,13 +45,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         date = DateFormat("dd/MM/yyyy")
             .format(_formKey.currentState.value['date']);
       }
-      // print(auth.token);
       final ref = FirebaseStorage.instance
           .ref()
           .child('user_image')
           .child(auth.userId + '.jpg');
-
+      print(ref);
       await ref.putFile(_pickedImage).onComplete;
+      final imageUrl = await ref.getDownloadURL();
       await Firestore.instance
           .collection('users')
           .document(auth.userId)
@@ -61,6 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'instagram_url':
             _formKey.currentState.value['instagram_url'].toString(),
         'bio': _formKey.currentState.value['bio'].toString(),
+        'profileImageURL': imageUrl,
       });
       Navigator.push(
         context,
@@ -80,6 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'facebook_url': '',
     'instagram_url': '',
     'bio': '',
+    'profileImageURL': '',
   };
   Future<void> readData() async {
     final auth = Provider.of<Auth>(context, listen: false);
@@ -110,6 +115,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         currentLoggedInProfile.update('bio', (v) {
           return documentSnapshot.data['bio'];
         });
+        currentLoggedInProfile.update('profileImageURL', (v) {
+          return documentSnapshot.data['profileImageURL'];
+        });
       },
     );
     if (_isLoading) {
@@ -135,7 +143,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     var now = DateTime.now();
     var today = new DateTime(now.year, now.month, now.day);
     return Scaffold(
-      // resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text('Edit Profile'),
         actions: <Widget>[
@@ -164,15 +171,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     CircleAvatar(
                       radius: 40,
                       backgroundColor: Colors.grey,
-                      backgroundImage:
-                          _pickedImage != null ? FileImage(_pickedImage) : null,
+                      backgroundImage: _pickedImage != null
+                          ? FileImage(_pickedImage)
+                          : NetworkImage(
+                              currentLoggedInProfile['profileImageURL'],
+                            ),
                     ),
                     FlatButton.icon(
                       textColor: Theme.of(context).primaryColor,
                       label: Text('Add Image'),
                       icon: Icon(Icons.image),
                       onPressed: _pickImage,
-                      // icon: Icon(Icons.image),
                     ),
                     SizedBox(
                       height: 20,
@@ -364,6 +373,8 @@ class FormBuilderTextWidgetURL extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var instaGram = r'^[a-zA-Z-]+(?:\s[a-zA-Z-]+)?$';
+
     return FormBuilderTextField(
       attribute: attributeTextField,
       initialValue: initValue,
@@ -376,11 +387,8 @@ class FormBuilderTextWidgetURL extends StatelessWidget {
       ),
       enabled: true,
       validators: [
-        FormBuilderValidators.minLength(3,
-            errorText: 'Length should be at least 5 characters'),
-        // FormBuilderValidators.maxLength(30,
-        // errorText: 'Length should be 20 characters at most'),
-        FormBuilderValidators.url(errorText: 'Please enter valid url'),
+        // FormBuilderValidators.pattern(instaGram, errorText: 'Enter valid url'),
+        // FormBuilderValidators.url(errorText: 'Please enter valid url'),
       ],
     );
   }
