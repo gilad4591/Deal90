@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:finalproject/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:finalproject/models/auth.dart';
 
 class ProductsGrid extends StatelessWidget {
   final bool showFavorites;
@@ -15,6 +16,7 @@ class ProductsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final dateFormatter = DateFormat("dd/MM/yyyy");
+    final auth = Provider.of<Auth>(context);
 
     final productsData = Provider.of<Products>(context);
     final productsFav =

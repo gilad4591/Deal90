@@ -2,8 +2,6 @@ import 'package:finalproject/providers/products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'dart:io';
 import 'package:finalproject/screens/deal_creator_screen.dart';
 
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -279,11 +277,16 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
   // var _ratingController;
   double _rating;
   double _initialRating = 0;
+  int _numberOfRaters = 0;
   bool _isVertical = false;
 
   var _isLoading = true;
   final snackBar = SnackBar(
     content: Text('You have rated this user succesfully!'),
+  );
+  final snackBarFailed = SnackBar(
+    content: Text('You are unable to rate.\n please try again later.'),
+    backgroundColor: Colors.red,
   );
 
   @override
@@ -296,6 +299,8 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
   @override
   Widget build(BuildContext context) {
     readRatingData(widget.creatorProfile);
+    final auth = Provider.of<Auth>(context, listen: false);
+
     return _isLoading
         ? CircularProgressIndicator()
         : Column(
@@ -340,15 +345,21 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
                   }
                 },
                 onRatingUpdate: (rating) {
-                  setState(() {
-                    _rating = rating;
-                    rateUser(widget.creatorProfile);
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  if (auth.token != null) {
+                    setState(() {
+                      _rating = rating;
+                      rateUser(widget.creatorProfile);
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(snackBarFailed);
+                  }
                   Navigator.pop(context);
                 },
+
                 // updateOnDrag: true,
               ),
+              Text('Number of raters: ' + _numberOfRaters.toString()),
             ],
           );
   }
@@ -391,6 +402,7 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
       setState(() {
         if (averageRating > 0) {
           _initialRating = averageRating;
+          _numberOfRaters = numberRaters;
         }
         _isLoading = false;
       });

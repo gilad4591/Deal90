@@ -7,6 +7,7 @@ import 'package:finalproject/screens/order_notification_screen.dart';
 import 'package:finalproject/screens/chat_screen.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:finalproject/screens/my_raters.dart';
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key key}) : super(key: key);
@@ -172,7 +173,12 @@ class _MainScreenState extends State<MainScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ButtonMain('Third Button', 0),
+                    InkWell(
+                        child: ButtonMain('My Rating', 0),
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushReplacementNamed(MyRatersScreen.routeName);
+                        }),
                     SizedBox(
                       width: 20,
                       height: 20,

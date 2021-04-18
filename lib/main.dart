@@ -17,6 +17,7 @@ import 'screens/profile_screen.dart';
 import 'screens/chat_screen.dart';
 import 'screens/order_notification_screen.dart';
 import 'screens/main_screen.dart';
+import 'screens/my_raters.dart';
 
 void main() => runApp(MyApp());
 
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
             ProfileScreen.routeName: (ctx) => ProfileScreen(),
             DealCreatorScreen.routeName: (ctx) => DealCreatorScreen(),
             ChatScreen.routeName: (ctx) => ChatScreen(),
+            MyRatersScreen.routeName: (ctx) => MyRatersScreen(),
             OrderNotificationScreen.routeName: (ctx) =>
                 OrderNotificationScreen(),
           },

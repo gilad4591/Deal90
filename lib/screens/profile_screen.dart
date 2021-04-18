@@ -11,7 +11,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
+import 'package:finalproject/widgets/logout_after_expired.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key}) : super(key: key);
@@ -89,38 +89,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> readData() async {
     final auth = Provider.of<Auth>(context, listen: false);
     final db = Firestore.instance;
-    await db.collection('users').document(auth.userId).get().then(
-      (DocumentSnapshot documentSnapshot) {
-        currentLoggedInProfile.update('city', (v) {
-          return documentSnapshot.data['city'];
+    if (auth.token != null) {
+      await db.collection('users').document(auth.userId).get().then(
+        (DocumentSnapshot documentSnapshot) {
+          currentLoggedInProfile.update('city', (v) {
+            return documentSnapshot.data['city'];
+          });
+          currentLoggedInProfile.update('date', (v) {
+            return documentSnapshot.data['date'];
+          });
+          currentLoggedInProfile.update('name', (v) {
+            return documentSnapshot.data['name'];
+          });
+          currentLoggedInProfile.update('email', (v) {
+            return documentSnapshot.data['email'];
+          });
+          currentLoggedInProfile.update('phone', (v) {
+            return documentSnapshot.data['phone'];
+          });
+          currentLoggedInProfile.update('facebook_url', (v) {
+            return documentSnapshot.data['facebook_url'];
+          });
+          currentLoggedInProfile.update('instagram_url', (v) {
+            return documentSnapshot.data['instagram_url'];
+          });
+          currentLoggedInProfile.update('bio', (v) {
+            return documentSnapshot.data['bio'];
+          });
+          currentLoggedInProfile.update('profileImageURL', (v) {
+            return documentSnapshot.data['profileImageURL'];
+          });
+        },
+      );
+      if (_isLoading) {
+        setState(() {
+          _isLoading = false;
         });
-        currentLoggedInProfile.update('date', (v) {
-          return documentSnapshot.data['date'];
-        });
-        currentLoggedInProfile.update('name', (v) {
-          return documentSnapshot.data['name'];
-        });
-        currentLoggedInProfile.update('email', (v) {
-          return documentSnapshot.data['email'];
-        });
-        currentLoggedInProfile.update('phone', (v) {
-          return documentSnapshot.data['phone'];
-        });
-        currentLoggedInProfile.update('facebook_url', (v) {
-          return documentSnapshot.data['facebook_url'];
-        });
-        currentLoggedInProfile.update('instagram_url', (v) {
-          return documentSnapshot.data['instagram_url'];
-        });
-        currentLoggedInProfile.update('bio', (v) {
-          return documentSnapshot.data['bio'];
-        });
-        currentLoggedInProfile.update('profileImageURL', (v) {
-          return documentSnapshot.data['profileImageURL'];
-        });
-      },
-    );
-    if (_isLoading) {
+      }
+    } else {
       setState(() {
         _isLoading = false;
       });
@@ -131,6 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     readData();
     DateTime date;
+    final auth = Provider.of<Auth>(context, listen: false);
     if (currentLoggedInProfile['date'] != null) {
       if (!_isLoading) {
         if (currentLoggedInProfile['date'].length > 1)
@@ -163,139 +170,147 @@ class _ProfileScreenState extends State<ProfileScreen> {
               isAlwaysShown: true,
               child: SingleChildScrollView(
                 controller: _scrollController,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Colors.grey,
-                      backgroundImage: _pickedImage != null
-                          ? FileImage(_pickedImage)
-                          : NetworkImage(
-                              currentLoggedInProfile['profileImageURL'],
-                            ),
-                    ),
-                    FlatButton.icon(
-                      textColor: Theme.of(context).primaryColor,
-                      label: Text('Add Image'),
-                      icon: Icon(Icons.image),
-                      onPressed: _pickImage,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: SingleChildScrollView(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          width: MediaQuery.of(context).size.width * 0.95,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(),
-                            ],
-                            borderRadius: BorderRadius.circular(10),
+                child: auth.userId == null
+                    ? LogOutAlertDialog()
+                    : Column(
+                        children: [
+                          SizedBox(
+                            height: 10,
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: FormBuilder(
-                              key: _formKey,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: <Widget>[
-                                    // FormBuilderTextWidget(
-                                    //   icon: Icon(Icons.email),
-                                    //   attributeTextField: 'Email',
-                                    //   isEnabled: false,
-                                    //   initValue:
-                                    //       currentLoggedInProfile['email'],
-                                    // ),
-                                    FormBuilderTextWidget(
-                                      icon: Icon(Icons.perm_identity),
-                                      attributeTextField: 'Name',
-                                      isEnabled: true,
-                                      initValue: currentLoggedInProfile['name'],
-                                    ),
-                                    FormBuilderTextWidget(
-                                      icon: Icon(Icons.location_city),
-                                      attributeTextField: 'City',
-                                      isEnabled: true,
-                                      initValue: currentLoggedInProfile['city'],
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Container(
-                                      height: 50,
-                                      child: FormBuilderDateTimePicker(
-                                        attribute: "date",
-                                        inputType: InputType.date,
-                                        firstDate: today,
-                                        format: DateFormat("dd/MM/yyyy"),
-                                        initialValue: date,
-                                        decoration: InputDecoration(
-                                          icon: Icon(
-                                              Icons.calendar_today_rounded),
-                                          labelText: "Event date",
-                                          labelStyle: TextStyle(
-                                            color: Colors.blueAccent,
-                                            fontSize: 14,
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: _pickedImage != null
+                                ? FileImage(_pickedImage)
+                                : NetworkImage(
+                                    currentLoggedInProfile['profileImageURL'],
+                                  ),
+                          ),
+                          FlatButton.icon(
+                            textColor: Theme.of(context).primaryColor,
+                            label: Text('Add Image'),
+                            icon: Icon(Icons.image),
+                            onPressed: _pickImage,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Center(
+                            child: SingleChildScrollView(
+                              child: Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.7,
+                                width: MediaQuery.of(context).size.width * 0.95,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(),
+                                  ],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: FormBuilder(
+                                    key: _formKey,
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: <Widget>[
+                                          // FormBuilderTextWidget(
+                                          //   icon: Icon(Icons.email),
+                                          //   attributeTextField: 'Email',
+                                          //   isEnabled: false,
+                                          //   initValue:
+                                          //       currentLoggedInProfile['email'],
+                                          // ),
+                                          FormBuilderTextWidget(
+                                            icon: Icon(Icons.perm_identity),
+                                            attributeTextField: 'Name',
+                                            isEnabled: true,
+                                            initValue:
+                                                currentLoggedInProfile['name'],
                                           ),
-                                        ),
+                                          FormBuilderTextWidget(
+                                            icon: Icon(Icons.location_city),
+                                            attributeTextField: 'City',
+                                            isEnabled: true,
+                                            initValue:
+                                                currentLoggedInProfile['city'],
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Container(
+                                            height: 50,
+                                            child: FormBuilderDateTimePicker(
+                                              attribute: "date",
+                                              inputType: InputType.date,
+                                              firstDate: today,
+                                              format: DateFormat("dd/MM/yyyy"),
+                                              initialValue: date,
+                                              decoration: InputDecoration(
+                                                icon: Icon(Icons
+                                                    .calendar_today_rounded),
+                                                labelText: "Event date",
+                                                labelStyle: TextStyle(
+                                                  color: Colors.blueAccent,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          FormBuilderTextWidget(
+                                            attributeTextField: 'Phone',
+                                            isEnabled: true,
+                                            initValue:
+                                                currentLoggedInProfile['phone'],
+                                            isPhone: true,
+                                            icon: Icon(Icons.phone),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          FormBuilderTextWidgetURL(
+                                            attributeTextField: 'instagram_url',
+                                            initValue: currentLoggedInProfile[
+                                                'instagram_url'],
+                                            labelTextField: 'Instagram URL',
+                                            icon: Icon(
+                                                FontAwesomeIcons.instagram),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          FormBuilderTextWidgetURL(
+                                            attributeTextField: 'facebook_url',
+                                            initValue: currentLoggedInProfile[
+                                                'facebook_url'],
+                                            labelTextField: 'Facebook URL',
+                                            icon:
+                                                Icon(FontAwesomeIcons.facebook),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          FormBuilderTextWidgetBio(
+                                            attributeTextField: 'bio',
+                                            initValue:
+                                                currentLoggedInProfile['bio'],
+                                            icon: Icon(Icons.contact_page),
+                                            labelTextField: 'bio',
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    FormBuilderTextWidget(
-                                      attributeTextField: 'Phone',
-                                      isEnabled: true,
-                                      initValue:
-                                          currentLoggedInProfile['phone'],
-                                      isPhone: true,
-                                      icon: Icon(Icons.phone),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    FormBuilderTextWidgetURL(
-                                      attributeTextField: 'instagram_url',
-                                      initValue: currentLoggedInProfile[
-                                          'instagram_url'],
-                                      labelTextField: 'Instagram URL',
-                                      icon: Icon(FontAwesomeIcons.instagram),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    FormBuilderTextWidgetURL(
-                                      attributeTextField: 'facebook_url',
-                                      initValue: currentLoggedInProfile[
-                                          'facebook_url'],
-                                      labelTextField: 'Facebook URL',
-                                      icon: Icon(FontAwesomeIcons.facebook),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    FormBuilderTextWidgetBio(
-                                      attributeTextField: 'bio',
-                                      initValue: currentLoggedInProfile['bio'],
-                                      icon: Icon(Icons.contact_page),
-                                      labelTextField: 'bio',
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
     );
