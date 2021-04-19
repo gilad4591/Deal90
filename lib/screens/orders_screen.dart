@@ -5,8 +5,25 @@ import 'package:finalproject/providers/orders.dart' show Orders;
 import '../widgets//order_item.dart';
 import '../widgets/app_drawer.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   static const routeName = '/orders';
+
+  @override
+  _OrdersScreenState createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  Future _ordersFuture;
+  Future _obteinOrdersFuture() {
+    return Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+  }
+
+  @override
+  void initState() {
+    _ordersFuture = _obteinOrdersFuture();
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +33,9 @@ class OrdersScreen extends StatelessWidget {
       ),
       drawer: AppDrawer(),
       body: FutureBuilder(
-        future: Provider.of<Orders>(context, listen: false).fetchAndSetOrders(),
+        future: _ordersFuture,
         builder: (ctx, dataSnapshot) {
+          print(dataSnapshot.hasData);
           if (dataSnapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else {
@@ -28,17 +46,19 @@ class OrdersScreen extends StatelessWidget {
                 child: Text('An error occurred! please try again'),
               );
             } else
-              return dataSnapshot.hasData
-                  ? {
-                      Consumer<Orders>(
-                        builder: (ctx, orderData, child) => ListView.builder(
-                          itemCount: orderData.orders.length,
-                          itemBuilder: (ctx, i) =>
-                              OrderItem(orderData.orders[i]),
-                        ),
+              return
+                  // dataSnapshot.hasData
+                  // ? {
+                  Consumer<Orders>(
+                builder: (ctx, orderData, child) => orderData.orders.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: orderData.orders.length,
+                        itemBuilder: (ctx, i) => OrderItem(orderData.orders[i]),
                       )
-                    }
-                  : NothingOrderedYet();
+                    : NothingOrderedYet(),
+              );
+            // }
+            // : NothingOrderedYet();
           }
         },
       ),

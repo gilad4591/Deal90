@@ -158,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
                       height: 20,
                     ),
                     InkWell(
-                      child: ButtonMain('Chat', numberOfUnreadedNotification),
+                      child: ButtonMain('Chat', 0),
                       onTap: () {
                         Navigator.of(context)
                             .pushReplacementNamed(ChatScreen.routeName);
