@@ -50,8 +50,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .child('user_image')
           .child(auth.userId + '.jpg');
       print(ref);
-      await ref.putFile(_pickedImage).onComplete;
-      final imageUrl = await ref.getDownloadURL();
+      var imageUrl = currentLoggedInProfile['profileImageURL'];
+      if (_pickedImage != null) {
+        await ref.putFile(_pickedImage).onComplete;
+        imageUrl = await ref.getDownloadURL();
+      }
       await Firestore.instance
           .collection('users')
           .document(auth.userId)
