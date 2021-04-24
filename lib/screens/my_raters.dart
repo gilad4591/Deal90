@@ -84,13 +84,12 @@ class _ShowMyRatingState extends State<ShowMyRating> {
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.documents.forEach((doc) async {
           String rater = doc.documentID;
-          // print(rater);
           if (!raterList.contains(rater)) {
             raterList.add({
               rater,
             });
             ratingList.add(doc['rate']);
-            await getRaterName(rater);
+            await getRaterName(rater).then((value) => null);
           }
         });
       });
@@ -231,7 +230,7 @@ class MyCurrentRating extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: List.generate(5, (index) {
           return Icon(
-            index < _initialRating ? Icons.star : Icons.star_border,
+            index < _initialRating.toInt() ? Icons.star : Icons.star_border,
             color: Colors.blue,
           );
         }),
