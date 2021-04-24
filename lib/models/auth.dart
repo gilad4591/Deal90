@@ -69,12 +69,8 @@ class Auth with ChangeNotifier {
       final tokenResult = await FirebaseAuth.instance.currentUser();
       final idToken = await tokenResult.getIdToken();
       _token = idToken.token;
-      print(_token);
-      print(authResult.user.uid);
       _userId = authResult.user.uid;
-      _expiryDate = DateTime.now().add(Duration(
-        minutes: 30,
-      ));
+      _expiryDate = idToken.expirationTime;
       _autoLogout();
       notifyListeners();
     } catch (error) {
