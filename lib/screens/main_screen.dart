@@ -1,3 +1,4 @@
+import 'package:finalproject/screens/calc_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
@@ -146,8 +147,7 @@ class _MainScreenState extends State<MainScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
-                      child: ButtonMain(
-                          'Notifications', numberOfUnreadedNotification),
+                      child: ButtonMain('התראות', numberOfUnreadedNotification),
                       onTap: () {
                         Navigator.of(context).pushReplacementNamed(
                             OrderNotificationScreen.routeName);
@@ -158,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
                       height: 20,
                     ),
                     InkWell(
-                      child: ButtonMain('Chat', 0),
+                      child: ButtonMain('צ׳אט', 0),
                       onTap: () {
                         Navigator.of(context)
                             .pushReplacementNamed(ChatScreen.routeName);
@@ -174,7 +174,7 @@ class _MainScreenState extends State<MainScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
-                        child: ButtonMain('My Rating', 0),
+                        child: ButtonMain('הדירוג שלי', 0),
                         onTap: () {
                           Navigator.of(context)
                               .pushReplacementNamed(MyRatersScreen.routeName);
@@ -183,7 +183,16 @@ class _MainScreenState extends State<MainScreen> {
                       width: 20,
                       height: 20,
                     ),
-                    ButtonMain('Fourth Button', 0),
+                    InkWell(
+                        child: ButtonMain('מחשבון אלכוהול', 0),
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushReplacementNamed(CalcScreen.routeName);
+                        }),
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                    ),
                   ],
                 ),
                 SizedBox(

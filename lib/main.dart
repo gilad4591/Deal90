@@ -18,6 +18,7 @@ import 'screens/chat_screen.dart';
 import 'screens/order_notification_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/my_raters.dart';
+import 'screens/calc_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
             MyRatersScreen.routeName: (ctx) => MyRatersScreen(),
             OrderNotificationScreen.routeName: (ctx) =>
                 OrderNotificationScreen(),
+            CalcScreen.routeName: (ctx) => CalcScreen()
           },
         ),
       ),
