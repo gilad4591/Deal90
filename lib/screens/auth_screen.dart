@@ -1,5 +1,6 @@
 // import 'dart:math';
 import 'package:finalproject/models/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:finalproject/models/http_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -182,30 +183,34 @@ class _AuthCardState extends State<AuthCard>
           _authData['password'],
         );
         final auth = Provider.of<Auth>(context, listen: false);
-        await Firestore.instance
-            .collection('users')
-            .document(auth.userId)
-            .setData({
-          'email': _authData['email'],
-          'city': ' ',
-          'date': ' ',
-          'phone': ' ',
-          'name': ' ',
-          'instagram_url': ' ',
-          'facebook_url': ' ',
-          'profileImageURL':
-              'https://firebasestorage.googleapis.com/v0/b/finalproject-52a7e.appspot.com/o/user_image%2Fdefimage.jpg?alt=media&token=937de49b-8e2b-40f4-93aa-158f29c833e2',
-        });
+
+        // await FirebaseFirestore.instance
+        //     .collection('users')
+        //     .doc(auth.userId)
+        //     .set({
+        //   'email': _authData['email'],
+        //   'city': ' ',
+        //   'date': ' ',
+        //   'phone': ' ',
+        //   'name': ' ',
+        //   'instagram_url': ' ',
+        //   'facebook_url': ' ',
+        //   'profileImageURL':
+        //       'https://firebasestorage.googleapis.com/v0/b/finalproject-52a7e.appspot.com/o/user_image%2Fdefimage.jpg?alt=media&token=937de49b-8e2b-40f4-93aa-158f29c833e2',
+        // });
       }
-    } on PlatformException catch (error) {
+    } on FirebaseAuthException catch (error) {
       var errorMessage = error.message;
       print(errorMessage);
       if (error.toString().contains('another account')) {
         errorMessage = 'This email address is already in use.';
+        _showErrorDialog(errorMessage);
       } else if (error.toString().contains('corresponding')) {
         errorMessage = 'Could not find a user with that email.';
+        _showErrorDialog(errorMessage);
       } else if (error.toString().contains('is invalid')) {
         errorMessage = 'Invalid password.';
+        _showErrorDialog(errorMessage);
       }
       _showErrorDialog(errorMessage);
     } catch (error) {
@@ -264,9 +269,9 @@ class _AuthCardState extends State<AuthCard>
       child: AnimatedContainer(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeIn,
-        height: _authMode == AuthMode.Signup ? 320 : 260,
+        height: _authMode == AuthMode.Signup ? 340 : 280,
         constraints: BoxConstraints(
-          minHeight: _authMode == AuthMode.Signup ? 320 : 260,
+          minHeight: _authMode == AuthMode.Signup ? 340 : 280,
         ),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),

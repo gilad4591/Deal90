@@ -1,4 +1,7 @@
+import 'package:finalproject/providers/product.dart';
 import 'package:finalproject/providers/products.dart';
+import 'package:finalproject/utils/fcm/send_push.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,38 +33,38 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   var _isloading = true;
 
   Future<void> loadProfile(String creatorId) async {
-    final db = Firestore.instance;
-    await db.collection('users').document(creatorId).get().then(
+    final db = FirebaseFirestore.instance;
+    await db.collection('users').doc(creatorId).get().then(
       (DocumentSnapshot documentSnapshot) {
         creatorProfile.update('id', (v) {
           return creatorId;
         });
         creatorProfile.update('city', (v) {
-          return documentSnapshot.data['city'];
+          return documentSnapshot.get('city');
         });
         creatorProfile.update('date', (v) {
-          return documentSnapshot.data['date'];
+          return documentSnapshot.get('date');
         });
         creatorProfile.update('name', (v) {
-          return documentSnapshot.data['name'];
+          return documentSnapshot.get('name');
         });
         creatorProfile.update('email', (v) {
-          return documentSnapshot.data['email'];
+          return documentSnapshot.get('email');
         });
         creatorProfile.update('phone', (v) {
-          return documentSnapshot.data['phone'];
+          return documentSnapshot.get('phone');
         });
         creatorProfile.update('instagram_url', (v) {
-          return documentSnapshot.data['instagram_url'];
+          return documentSnapshot.get('instagram_url');
         });
         creatorProfile.update('facebook_url', (v) {
-          return documentSnapshot.data['facebook_url'];
+          return documentSnapshot.get('facebook_url');
         });
         creatorProfile.update('bio', (v) {
-          return documentSnapshot.data['bio'];
+          return documentSnapshot.get('bio');
         });
         creatorProfile.update('profileImageURL', (v) {
-          return documentSnapshot.data['profileImageURL'];
+          return documentSnapshot.get('profileImageURL');
         });
       },
     );
@@ -130,7 +133,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
             SizedBox(height: 50),
             !_isloading
-                ? CreatorDetailsButton(creatorProfile: creatorProfile)
+                ? CreatorDetailsButton(creatorProfile: creatorProfile, loadedProduct: loadedProduct)
                 : CircularProgressIndicator(),
           ],
         ),
@@ -143,62 +146,110 @@ class CreatorDetailsButton extends StatelessWidget {
   const CreatorDetailsButton({
     Key key,
     @required this.creatorProfile,
+    @required this.loadedProduct,
   }) : super(key: key);
 
+  final Product loadedProduct;
   final Map<String, String> creatorProfile;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ElevatedButton(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-                side: BorderSide(color: Theme.of(context).buttonColor),
+        SizedBox(
+          width: 200,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                  side: BorderSide(color: Theme.of(context).buttonColor),
+                ),
               ),
             ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return CreatorDetailsDialog(creatorProfile: creatorProfile);
+                },
+              );
+            },
+            child: Text("Rate Me!"),
           ),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CreatorDetailsDialog(creatorProfile: creatorProfile);
-              },
-            );
-          },
-          child: Text("Rate Me!"),
         ),
-        ElevatedButton(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-                side: BorderSide(color: Theme.of(context).buttonColor),
+        SizedBox(
+          width: 200,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.indigo),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                  side: BorderSide(color: Theme.of(context).buttonColor),
+                ),
               ),
             ),
+            onPressed: () async{
+              /// Send A push to the Deal's creator
+              // final dealCreatorId =
+              //     "d-Uej_9ZQV6dtc1RlFKn89:APA91bHgrT_kVTpVW2kUo-Uced0iplaHu3N5Y3_aBqjiM-YFSQJuRctKY_tUpOhGZYUs0f5WUrmEEAocsJqBKu9-a2ifJTha_11jTjtspU_AKsWuG147rditxi1F-QF6l7Jvi1Wmhu6p";
+
+              FirebaseDatabase.instance.reference().child('fcmTokens/${creatorProfile['id']}/tokens').once().then( (snapshot) async {
+
+                for(String id in snapshot.value) {
+                  final dealCreatorId = id;
+
+                  var response = await SendPush.to(
+                      dealCreatorId,
+                      title: "A new user ordered your deal!",
+                      body: "Check out who it is",
+                      imageUrl: loadedProduct.imageUrl
+                  );
+
+                  print(response.statusCode);
+                }
+              });
+
+              /// Change it's status to PENDING
+            },
+            child: Text("Order Now!"),
           ),
-          onPressed: () {
-            Navigator.of(context).pushNamed(
-              DealCreatorScreen.routeName,
-              arguments: ScreenArguments(
-                creatorProfile['name'],
-                creatorProfile['city'],
-                creatorProfile['phone'],
-                creatorProfile['instagram_url'],
-                creatorProfile['facebook_url'],
-                creatorProfile['email'],
-                creatorProfile['bio'],
-                creatorProfile['profileImageURL'],
+        ),
+        SizedBox(
+          width: 200,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                  side: BorderSide(color: Theme.of(context).buttonColor),
+                ),
               ),
-            );
-          },
-          child: Text("  Deal Creator Card "),
+            ),
+            onPressed: () {
+              Navigator.of(context).pushNamed(
+                DealCreatorScreen.routeName,
+                arguments: ScreenArguments(
+                  creatorProfile['id'],
+                  creatorProfile['name'],
+                  creatorProfile['city'],
+                  creatorProfile['phone'],
+                  creatorProfile['instagram_url'],
+                  creatorProfile['facebook_url'],
+                  creatorProfile['email'],
+                  creatorProfile['bio'],
+                  creatorProfile['profileImageURL'],
+                ),
+              );
+            },
+            child: Text("  Deal Creator Card "),
+          ),
         )
       ],
     );
@@ -267,6 +318,7 @@ class DisplayCreatorDetailsWidget extends StatelessWidget {
 
 class RatingBarCreator extends StatefulWidget {
   final Map<String, String> creatorProfile;
+
   const RatingBarCreator({Key key, this.creatorProfile}) : super(key: key);
 
   @override
@@ -350,9 +402,9 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
                       _rating = rating;
                       rateUser(widget.creatorProfile);
                     });
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(snackBarFailed);
+                    // ScaffoldMessenger.of(context).showSnackBar(snackBarFailed);
                   }
                   Navigator.pop(context);
                 },
@@ -372,11 +424,11 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
     // ignore: unused_local_variable
     var myRating = -1.0;
     final auth = Provider.of<Auth>(context, listen: false);
-    final dbGeneralRating = Firestore.instance;
-    final dbMyRating = Firestore.instance;
+    final dbGeneralRating = FirebaseFirestore.instance;
+    final dbMyRating = FirebaseFirestore.instance;
     await dbGeneralRating
         .collection('userRating')
-        .document(creatorProfile['id'])
+        .doc(creatorProfile['id'])
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.data != null) {
@@ -388,13 +440,13 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
     if (numberRaters > 0) {
       await dbMyRating
           .collection('userRating')
-          .document(creatorProfile['id'])
+          .doc(creatorProfile['id'])
           .collection('raters')
-          .document(auth.userId)
+          .doc(auth.userId)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
         if (documentSnapshot.data != null) {
-          myRating = double.parse(documentSnapshot['rate']);
+          myRating = double.parse(documentSnapshot.get('rate'));
         }
       });
     }
@@ -419,11 +471,11 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
     var numberRaters = 0;
     var createNewDoc = false;
 
-    final dbGeneralRating = Firestore.instance;
-    final dbMyRating = Firestore.instance;
+    final dbGeneralRating = FirebaseFirestore.instance;
+    final dbMyRating = FirebaseFirestore.instance;
     await dbGeneralRating
         .collection('userRating')
-        .document(creatorProfile['id'])
+        .doc(creatorProfile['id'])
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.data != null) {
@@ -435,9 +487,9 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
     if (numberRaters > 0) {
       await dbMyRating
           .collection('userRating')
-          .document(creatorProfile['id'])
+          .doc(creatorProfile['id'])
           .collection('raters')
-          .document(auth.userId)
+          .doc(auth.userId)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
         if (documentSnapshot.data != null) {
@@ -448,40 +500,40 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
       createNewDoc = true;
     }
     if (oldRating > 0) {
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('userRating')
-          .document(creatorProfile['id'])
+          .doc(creatorProfile['id'])
           .collection('raters')
-          .document(auth.userId)
-          .updateData({
+          .doc(auth.userId)
+          .update({
         'rate': (_rating).toString(),
       });
     } else {
       numberRaters++;
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('userRating')
-          .document(creatorProfile['id'])
+          .doc(creatorProfile['id'])
           .collection('raters')
-          .document(auth.userId)
-          .setData({
+          .doc(auth.userId)
+          .set({
         'rate': (_rating).toString(),
       });
     }
     if (!createNewDoc) {
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('userRating')
-          .document(creatorProfile['id'])
-          .updateData({
+          .doc(creatorProfile['id'])
+          .update({
         'sum': (sumRating - oldRating + _rating).toString(),
         'average':
             ((sumRating - oldRating + newRating) / numberRaters).toString(),
         'numberRaters': (numberRaters).toString(),
       });
     } else {
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('userRating')
-          .document(creatorProfile['id'])
-          .setData({
+          .doc(creatorProfile['id'])
+          .set({
         'sum': (sumRating - oldRating + _rating).toString(),
         'average':
             ((sumRating - oldRating + newRating) / numberRaters).toString(),
