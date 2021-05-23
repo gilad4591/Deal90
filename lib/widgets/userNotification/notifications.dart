@@ -13,7 +13,7 @@ class Notifications extends StatelessWidget {
     final user = Provider.of<Auth>(context, listen: false);
 
     return FutureBuilder(
-      future: Future.value(FirebaseAuth.instance.currentUser),
+      future: FirebaseAuth.instance.currentUser(),
       builder: (context, futureSnapshot) {
         if (futureSnapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -21,9 +21,9 @@ class Notifications extends StatelessWidget {
           );
         }
         return StreamBuilder(
-            stream: FirebaseFirestore.instance
+            stream: Firestore.instance
                 .collection('ordernotification')
-                .doc(user.userId)
+                .document(user.userId)
                 .collection('Notifications')
                 .snapshots(),
             builder: (context, notificationSnapshot) {
@@ -33,7 +33,7 @@ class Notifications extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               }
-              final notificationDocs = notificationSnapshot.data.docs;
+              final notificationDocs = notificationSnapshot.data.documents;
               return notificationDocs.length == 0
                   ? NoOrdersYet()
                   : ListView.builder(
@@ -43,7 +43,7 @@ class Notifications extends StatelessWidget {
                         notificationDocs[index]['orderBy'],
                         notificationDocs[index]['prodId'],
                         notificationDocs[index]['seen'],
-                        notificationDocs[index].docID,
+                        notificationDocs[index].documentID,
                       ),
                     );
             });

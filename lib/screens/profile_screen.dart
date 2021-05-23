@@ -14,8 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:finalproject/widgets/logout_after_expired.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final bool fromStart;
-  ProfileScreen({Key key, this.fromStart}) : super(key: key);
+  ProfileScreen({Key key}) : super(key: key);
   static const routeName = '/edit-profile';
 
   @override
@@ -56,11 +55,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await ref.putFile(_pickedImage).onComplete;
         imageUrl = await ref.getDownloadURL();
       }
-      await FirebaseFirestore.instance
+      await Firestore.instance
           .collection('users')
-          .doc(auth.userId)
-          .set({
-        'email': auth.auth.currentUser.email,
+          .document(auth.userId)
+          .updateData({
         'date': date,
         'city': _formKey.currentState.value['City'].toString(),
         'phone': _formKey.currentState.value['Phone'].toString(),
@@ -70,8 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _formKey.currentState.value['instagram_url'].toString(),
         'bio': _formKey.currentState.value['bio'].toString(),
         'profileImageURL': imageUrl,
-      }, SetOptions(merge: true));
-
+      });
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ProductOveviewScreen()),
@@ -94,36 +91,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   };
   Future<void> readData() async {
     final auth = Provider.of<Auth>(context, listen: false);
-    final db = FirebaseFirestore.instance;
+    final db = Firestore.instance;
     if (auth.token != null) {
-      await db.collection('users').doc(auth.userId).get().then(
+      await db.collection('users').document(auth.userId).get().then(
         (DocumentSnapshot documentSnapshot) {
           currentLoggedInProfile.update('city', (v) {
-            return documentSnapshot.get('city');
+            return documentSnapshot.data['city'];
           });
           currentLoggedInProfile.update('date', (v) {
-            return documentSnapshot.get('date');
+            return documentSnapshot.data['date'];
           });
           currentLoggedInProfile.update('name', (v) {
-            return documentSnapshot.get('name');
+            return documentSnapshot.data['name'];
           });
           currentLoggedInProfile.update('email', (v) {
-            return documentSnapshot.get('email');
+            return documentSnapshot.data['email'];
           });
           currentLoggedInProfile.update('phone', (v) {
-            return documentSnapshot.get('phone');
+            return documentSnapshot.data['phone'];
           });
           currentLoggedInProfile.update('facebook_url', (v) {
-            return documentSnapshot.get('facebook_url');
+            return documentSnapshot.data['facebook_url'];
           });
           currentLoggedInProfile.update('instagram_url', (v) {
-            return documentSnapshot.get('instagram_url');
+            return documentSnapshot.data['instagram_url'];
           });
           currentLoggedInProfile.update('bio', (v) {
-            return documentSnapshot.get('bio');
+            return documentSnapshot.data['bio'];
           });
           currentLoggedInProfile.update('profileImageURL', (v) {
-            return documentSnapshot.get('profileImageURL');
+            return documentSnapshot.data['profileImageURL'];
           });
         },
       );
@@ -165,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-      drawer: widget.fromStart!=null && widget.fromStart ? null: AppDrawer(),
+      drawer: AppDrawer(),
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(),
@@ -370,9 +367,8 @@ class FormBuilderTextWidget extends StatelessWidget {
             : FormBuilderValidators.pattern(patternNotSpecialChars,
                 errorText:
                     'Please do not use special charecters or multiple spaces.'),
-        FormBuilderValidators.minLength(3,
-            errorText: ''
-                'Length should be at least 5 characters'),
+        FormBuilderValidators.minLength(5,
+            errorText: 'Length should be at least 5 characters'),
         FormBuilderValidators.maxLength(20,
             errorText: 'Length should be 20 characters at most'),
       ],

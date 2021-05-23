@@ -1,12 +1,10 @@
 // import 'package:finalproject/models/screen_arguments.dart';
 // import 'package:finalproject/providers/products.dart';
-import 'package:finalproject/screens/deal_recommendations_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import '../widgets/app_drawer.dart';
-import 'my_raters.dart';
 import 'nm_box.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -59,7 +57,9 @@ class DealCreatorScreen extends StatelessWidget {
                         _launchURL(args.creatorFacebookURL);
                       },
                     ),
-                    SizedBox(width: 25),
+                    SizedBox(
+                      width: 25,
+                    ),
                     GestureDetector(
                       child: NMButton(
                         icon: FontAwesomeIcons.whatsapp,
@@ -90,29 +90,6 @@ class DealCreatorScreen extends StatelessWidget {
                 Spacer(),
                 SizedBox(height: 20),
                 SizedBox(height: 20),
-                SizedBox(
-                  width: 200,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                          side: BorderSide(color: Theme.of(context).buttonColor),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(
-                          context,
-                          DealRecommendationsScreen.routeName,
-                          arguments: DealRecommendationsArgs(args.id)
-                      );
-                    },
-                    child: Text("See recommendations"),
-                  ),
-                ),
                 SizedBox(height: 35),
               ],
             ),
@@ -131,11 +108,9 @@ class ScreenArguments {
   final String creatorFacebookURL;
   final String creatorEmail;
   final String bio;
-  final String id;
   final String profileImageURL;
 
   ScreenArguments(
-      this.id,
       this.creatorName,
       this.creatorCity,
       this.creatorPhone,
@@ -157,7 +132,6 @@ class SocialBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-
         padding: EdgeInsets.all(15),
         decoration: nMboxInvert,
         child: Row(

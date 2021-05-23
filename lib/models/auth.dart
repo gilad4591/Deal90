@@ -1,74 +1,27 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 // import 'package:http/http.dart' as http;
 // import 'dart:convert';
 // import '../models/http_exception.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum AuthState{
-  NOT_REGISTERED,
-  NOT_LOGGED_IN,
-  LOGGED_IN,
-}
 class Auth with ChangeNotifier {
   String _token;
   DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
   FirebaseAuth auth;
-  bool isRegistered = false;
-
-
-
-  // bool get isAuth {
-  //   return _auth.currentUser != null;
-  //   // return token != null;
-  // }
-
-  AuthState get authState {
-    if(_auth.currentUser == null)
-      return AuthState.NOT_LOGGED_IN;
-
-    if(!isRegistered)
-      return AuthState.NOT_REGISTERED;
-
-    return AuthState.LOGGED_IN;
+  bool get isAuth {
+    return token != null;
   }
 
   final _auth = FirebaseAuth.instance;
 
-  Future<void> _checkIfRegistered()async {
-    var snapshot = await FirebaseFirestore.instance.doc(
-        'users/${_auth.currentUser.uid}').get();
-    isRegistered = snapshot.exists;
-    notifyListeners();
-  }
-
-
-  Auth() {
-    updateToken();
-    if(_auth.currentUser != null)
-      _checkIfRegistered();
-  }
-
   String get userId {
-    return _auth.currentUser?.uid ?? "";
+    return _userId;
   }
 
-  /// fetch token for first use
-  Future<void> updateToken() async{
-    if(_token == null && authState == AuthState.LOGGED_IN){
-      final tokenResult = FirebaseAuth.instance.currentUser;
-      final idToken = await tokenResult.getIdTokenResult();//getIdToken();
-      _token = idToken.token;
-      _expiryDate = idToken.expirationTime;
-      notifyListeners();
-    }
-  }
-
-  String get token{
+  String get token {
     if (_expiryDate != null &&
         _expiryDate.isAfter(DateTime.now()) &&
         _token != null) {
@@ -81,9 +34,7 @@ class Auth with ChangeNotifier {
       String email, String password, String urlSegment) async {
     // final url =
     //     'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyB_ImEcGl5PrubtLAMqVKCmxO5r3jZBMM0';
-
-
-    UserCredential authResult;
+    AuthResult authResult;
     try {
       if (urlSegment == 'signInWithPassword')
         authResult = await _auth.signInWithEmailAndPassword(
@@ -92,13 +43,6 @@ class Auth with ChangeNotifier {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
       }
-
-        var snapshot = await FirebaseFirestore.instance.doc('users/${authResult.user.uid}').get();
-        if(!snapshot.exists){
-          isRegistered = false;
-          notifyListeners();
-          return;
-        }
 
       // final response = await http.post(
       //   url,
@@ -122,9 +66,8 @@ class Auth with ChangeNotifier {
       //   ),
       // );
 
-      final tokenResult = FirebaseAuth.instance.currentUser;
-      final idToken = await tokenResult.getIdTokenResult();//getIdToken();
-      // TODO: CHECKKK
+      final tokenResult = await FirebaseAuth.instance.currentUser();
+      final idToken = await tokenResult.getIdToken();
       _token = idToken.token;
       _userId = authResult.user.uid;
       _expiryDate = idToken.expirationTime;
@@ -137,24 +80,13 @@ class Auth with ChangeNotifier {
 
   Future<void> signup(String email, String password) async {
     return _authenticate(email, password, 'signUp');
-    // await _auth.createUserWithEmailAndPassword(
-    //     email: email, password: password);
-
-
-    // if(_auth.currentUser == null)
-    //   return false;
-    //
-    // var x = await FirebaseFirestore.instance.doc('users/${_auth.currentUser.uid}').get();
-    // return x.exists;
-
-
   }
 
   Future<void> login(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
   }
 
-  void logout() async{
+  void logout() {
     _token = null;
     _userId = null;
     _expiryDate = null;
@@ -162,7 +94,6 @@ class Auth with ChangeNotifier {
       _authTimer.cancel();
       _authTimer = null;
     }
-    await _auth.signOut();
     notifyListeners();
   }
 

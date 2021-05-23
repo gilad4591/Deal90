@@ -42,9 +42,9 @@ class MessageBubble extends StatelessWidget {
                 : CrossAxisAlignment.start,
             children: <Widget>[
               FutureBuilder(
-                future: FirebaseFirestore.instance
+                future: Firestore.instance
                     .collection('users')
-                    .doc(userId)
+                    .document(userId)
                     .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

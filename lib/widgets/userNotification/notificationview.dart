@@ -37,9 +37,9 @@ class NotificationView extends StatelessWidget {
           child: Column(
             children: <Widget>[
               FutureBuilder(
-                future: FirebaseFirestore.instance
+                future: Firestore.instance
                     .collection('users')
-                    .doc(orderBy)
+                    .document(orderBy)
                     .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -170,12 +170,12 @@ class NotificationView extends StatelessWidget {
   }
 
   Future<void> changeToSeenNotification(Auth user, String documentId) async {
-    await FirebaseFirestore.instance
+    await Firestore.instance
         .collection('ordernotification')
-        .doc(user.userId)
+        .document(user.userId)
         .collection('Notifications')
-        .doc(documentId)
-        .update({
+        .document(documentId)
+        .updateData({
       'orderBy': orderBy,
       'prodId': prodId,
       'seen': 'true',
