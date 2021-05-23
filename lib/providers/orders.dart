@@ -101,12 +101,12 @@ class Orders with ChangeNotifier {
     );
     for (int i = 0; i < cartProuducts.length; i++) {
       print(cartProuducts[i].creator);
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('ordernotification')
-          .document(cartProuducts[i].creator)
+          .doc(cartProuducts[i].creator)
           .collection('Notifications')
-          .document()
-          .setData({
+          .doc()
+          .set({
         'orderBy': userId,
         'prodId': cartProuducts[i].productId,
         'seen': 'false',
