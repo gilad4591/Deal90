@@ -12,6 +12,7 @@ import './providers/orders.dart';
 import './screens/orders_screen.dart';
 import './screens/user_products_screen.dart';
 import 'models/auth.dart';
+import 'screens/calc_screen.dart';
 import 'screens/deal_recommendations_screen.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/auth_screen.dart';
@@ -97,6 +98,7 @@ class MyApp extends StatelessWidget {
                   OrderNotificationScreen(),
               DealRecommendationsScreen.routeName: (ctx) =>
                   DealRecommendationsScreen(),
+              CalcScreen.routeName: (ctx) => CalcScreen()
             },
           );
         },

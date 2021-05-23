@@ -9,6 +9,8 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:finalproject/screens/my_raters.dart';
 
+import 'calc_screen.dart';
+
 class MainScreen extends StatefulWidget {
   MainScreen({Key key}) : super(key: key);
   static const routeName = '/main';
@@ -183,7 +185,16 @@ class _MainScreenState extends State<MainScreen> {
                       width: 20,
                       height: 20,
                     ),
-                    ButtonMain('Fourth Button', 0),
+                    InkWell(
+                        child: ButtonMain('מחשבון אלכוהול', 0),
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushReplacementNamed(CalcScreen.routeName);
+                        }),
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                    ),
                   ],
                 ),
                 SizedBox(
