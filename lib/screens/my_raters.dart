@@ -62,28 +62,28 @@ class _ShowMyRatingState extends State<ShowMyRating> {
     // ignore: unused_local_variable
     var myRating = -1.0;
     final auth = Provider.of<Auth>(context, listen: false);
-    final dbGeneralRating = Firestore.instance;
-    final dbRaters = Firestore.instance;
+    final dbGeneralRating = FirebaseFirestore.instance;
+    final dbRaters = FirebaseFirestore.instance;
     await dbGeneralRating
         .collection('userRating')
-        .document(auth.userId)
+        .doc(auth.userId)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.data != null) {
-        averageRating = double.parse(documentSnapshot['average']);
-        sumRating = double.parse(documentSnapshot['sum']);
-        numberRaters = int.parse(documentSnapshot['numberRaters']);
+      if (documentSnapshot.data() != null) {
+        averageRating = double.parse(documentSnapshot.get('average'));
+        sumRating = double.parse(documentSnapshot.get('sum'));
+        numberRaters = int.parse(documentSnapshot.get('numberRaters'));
       }
     });
     if (numberRaters > 0) {
       await dbRaters
           .collection('userRating')
-          .document(auth.userId)
+          .doc(auth.userId)
           .collection('raters')
-          .getDocuments()
+          .get()
           .then((QuerySnapshot querySnapshot) {
-        querySnapshot.documents.forEach((doc) async {
-          String rater = doc.documentID;
+        querySnapshot.docs.forEach((doc) async {
+          String rater = doc.id;
           if (!raterList.contains(rater)) {
             raterList.add({
               rater,
@@ -112,11 +112,11 @@ class _ShowMyRatingState extends State<ShowMyRating> {
   }
 
   Future<void> getRaterName(String rater) async {
-    final dbRaterProfile = Firestore.instance;
+    final dbRaterProfile = FirebaseFirestore.instance;
 
     await dbRaterProfile
         .collection('users')
-        .document(rater)
+        .doc(rater)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.data != null && _isLoading) {

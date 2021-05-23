@@ -1,4 +1,3 @@
-import 'package:finalproject/screens/calc_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
@@ -45,36 +44,36 @@ class _MainScreenState extends State<MainScreen> {
   int numberOfUnreadedNotification = 0;
   Future<void> readData() async {
     final auth = Provider.of<Auth>(context, listen: false);
-    final db = Firestore.instance;
-    await db.collection('users').document(auth.userId).get().then(
+    final db = FirebaseFirestore.instance;
+    await db.collection('users').doc(auth.userId).get().then(
       (DocumentSnapshot documentSnapshot) {
         currentLoggedInProfile.update('city', (v) {
-          return documentSnapshot.data['city'];
+          return documentSnapshot.get('city');
         });
         currentLoggedInProfile.update('date', (v) {
-          return documentSnapshot.data['date'];
+          return documentSnapshot.get('date');
         });
         currentLoggedInProfile.update('name', (v) {
-          return documentSnapshot.data['name'];
+          return documentSnapshot.get('name');
         });
         currentLoggedInProfile.update('email', (v) {
-          return documentSnapshot.data['email'];
+          return documentSnapshot.get('email');
         });
         currentLoggedInProfile.update('phone', (v) {
-          return documentSnapshot.data['phone'];
+          return documentSnapshot.get('phone');
         });
       },
     );
 
-    QuerySnapshot querySnapshot = await Firestore.instance
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection("ordernotification")
-        .document(auth.userId)
+        .doc(auth.userId)
         .collection('Notifications')
-        .getDocuments();
-    for (int i = 0; i < querySnapshot.documents.length; i++) {
-      var a = querySnapshot.documents[i];
+        .get();
+    for (int i = 0; i < querySnapshot.docs.length; i++) {
+      var a = querySnapshot.docs[i];
       print(a.data);
-      String toCheck = a.data['seen'];
+      String toCheck = a.get('seen');
       if (toCheck == 'false') {
         numberOfUnreadedNotification++;
       }
@@ -147,7 +146,8 @@ class _MainScreenState extends State<MainScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
-                      child: ButtonMain('התראות', numberOfUnreadedNotification),
+                      child: ButtonMain(
+                          'Notifications', numberOfUnreadedNotification),
                       onTap: () {
                         Navigator.of(context).pushReplacementNamed(
                             OrderNotificationScreen.routeName);
@@ -158,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
                       height: 20,
                     ),
                     InkWell(
-                      child: ButtonMain('צ׳אט', 0),
+                      child: ButtonMain('Chat', 0),
                       onTap: () {
                         Navigator.of(context)
                             .pushReplacementNamed(ChatScreen.routeName);
@@ -174,7 +174,7 @@ class _MainScreenState extends State<MainScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
-                        child: ButtonMain('הדירוג שלי', 0),
+                        child: ButtonMain('My Rating', 0),
                         onTap: () {
                           Navigator.of(context)
                               .pushReplacementNamed(MyRatersScreen.routeName);
@@ -183,16 +183,7 @@ class _MainScreenState extends State<MainScreen> {
                       width: 20,
                       height: 20,
                     ),
-                    InkWell(
-                        child: ButtonMain('מחשבון אלכוהול', 0),
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushReplacementNamed(CalcScreen.routeName);
-                        }),
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                    ),
+                    ButtonMain('Fourth Button', 0),
                   ],
                 ),
                 SizedBox(

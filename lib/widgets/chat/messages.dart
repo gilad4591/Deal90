@@ -13,7 +13,7 @@ class Messages extends StatelessWidget {
     final user = Provider.of<Auth>(context, listen: false);
 
     return FutureBuilder(
-      future: FirebaseAuth.instance.currentUser(),
+      future: Future.value(FirebaseAuth.instance.currentUser),
       builder: (context, futureSnapshot) {
         if (futureSnapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -21,7 +21,7 @@ class Messages extends StatelessWidget {
           );
         }
         return StreamBuilder(
-            stream: Firestore.instance
+            stream: FirebaseFirestore.instance
                 .collection('chat')
                 .orderBy(
                   'createdAt',
