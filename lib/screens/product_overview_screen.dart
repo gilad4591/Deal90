@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finalproject/models/auth.dart';
 import 'package:finalproject/widgets/app_drawer.dart';
 import 'package:finalproject/widgets/products_grid.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widgets/badge.dart';
@@ -13,6 +16,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 enum FilterOptions {
   Favorites,
   All,
+  ForMe,
 }
 
 final _formKey = GlobalKey<FormBuilderState>();
@@ -37,9 +41,13 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
   var category;
   var regionF;
 
+  String userDateString;
+
   @override
   void initState() {
     super.initState();
+
+
   }
 
   Future<void> _refreshProducts(BuildContext context) async {
@@ -59,6 +67,15 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
       });
     }
     _isInit = false;
+
+    // save dealer's date
+     FirebaseFirestore.instance.doc('users/${FirebaseAuth.instance.currentUser.uid}')
+        .get().then((snapshot) {
+       userDateString = snapshot.get('date');
+     });
+
+
+
     super.didChangeDependencies();
   }
 
@@ -211,13 +228,24 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
                     });
               }),
           PopupMenuButton(
-            onSelected: (FilterOptions selectedValue) {
+            onSelected: (FilterOptions selectedValue) async {
               setState(() {
                 if (selectedValue == FilterOptions.Favorites) {
                   _showOnlyFavorites = true;
-                } else {
-                  _showOnlyFavorites = false;
+
                 }
+                else if(selectedValue == FilterOptions.ForMe){
+
+
+                  date = userDateString;
+                  filterByDate = true;
+                }
+                else {
+                  _showOnlyFavorites = false;
+                  filterByDate = false;
+                }
+
+
               });
             },
             icon: Icon(
@@ -225,8 +253,13 @@ class _ProductOveviewScreenState extends State<ProductOveviewScreen> {
             ),
             itemBuilder: (_) => [
               PopupMenuItem(
-                  child: Text('Only Favorites'),
-                  value: FilterOptions.Favorites),
+                child: Text('Only Favorites'),
+                value: FilterOptions.Favorites,
+              ),
+              PopupMenuItem(
+                child: Text('Show Deals For me'),
+                value: FilterOptions.ForMe,
+              ),
               PopupMenuItem(child: Text('Show All'), value: FilterOptions.All),
             ],
           ),
