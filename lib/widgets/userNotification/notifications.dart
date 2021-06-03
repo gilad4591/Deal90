@@ -43,7 +43,7 @@ class Notifications extends StatelessWidget {
                         notificationDocs[index]['orderBy'],
                         notificationDocs[index]['prodId'],
                         notificationDocs[index]['seen'],
-                        notificationDocs[index].docID,
+                        notificationDocs[index].documentID,
                       ),
                     );
             });

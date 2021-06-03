@@ -148,8 +148,7 @@ class _MainScreenState extends State<MainScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
-                      child: ButtonMain(
-                          'Notifications', numberOfUnreadedNotification),
+                      child: ButtonMain('התראות', numberOfUnreadedNotification),
                       onTap: () {
                         Navigator.of(context).pushReplacementNamed(
                             OrderNotificationScreen.routeName);
@@ -160,7 +159,7 @@ class _MainScreenState extends State<MainScreen> {
                       height: 20,
                     ),
                     InkWell(
-                      child: ButtonMain('Chat', 0),
+                      child: ButtonMain('צאט', 0),
                       onTap: () {
                         Navigator.of(context)
                             .pushReplacementNamed(ChatScreen.routeName);
@@ -176,7 +175,7 @@ class _MainScreenState extends State<MainScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
-                        child: ButtonMain('My Rating', 0),
+                        child: ButtonMain('הדירוג שלי', 0),
                         onTap: () {
                           Navigator.of(context)
                               .pushReplacementNamed(MyRatersScreen.routeName);
@@ -192,7 +191,6 @@ class _MainScreenState extends State<MainScreen> {
                               .pushReplacementNamed(CalcScreen.routeName);
                         }),
                     SizedBox(
-                      width: 20,
                       height: 20,
                     ),
                   ],
