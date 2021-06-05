@@ -61,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .collection('users')
           .doc(auth.userId)
           .set({
-        'email': auth.auth.currentUser.email,
+        'email': currentLoggedInProfile['email'],
         'date': date,
         'city': _formKey.currentState.value['City'].toString(),
         'phone': _formKey.currentState.value['Phone'].toString(),
@@ -378,7 +378,7 @@ class FormBuilderTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var phonePattern = r'^(05)?[0-9]{8}$';
-    var patternNotSpecialChars = r'^[a-zA-Z-]+(?:\s[a-zA-Z-]+)?$';
+    var patternNotSpecialChars = r'^[a-zA-Z-]+(?:\s[a-zA-Z- ]+)?$';
     Color color;
     isEnabled ? color = Colors.blueAccent : color = Colors.grey;
     return FormBuilderTextField(

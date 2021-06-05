@@ -63,39 +63,38 @@ class NotificationView extends StatelessWidget {
                         ),
                         if (seen.contains('false'))
                           SizedBox(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'New order!',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
+                            width: MediaQuery.of(context).size.width * 0.15,
+                            // height: MediaQuery.of(context).size.height * 0.1,
+                            child: Column(
+                              children: [
+                                Text(
+                                  'New order!',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
                                   ),
-                                  ButtonTheme(
-                                    minWidth: 25.0,
-                                    height: 25.0,
-                                    buttonColor: Colors.white,
-                                    child: RaisedButton(
-                                      onPressed: () {
-                                        changeToSeenNotification(
-                                            user, documentId);
-                                      },
-                                      child: Icon(Icons.check),
-                                    ),
+                                ),
+                                ButtonTheme(
+                                  minWidth: 20.0,
+                                  height: 20.0,
+                                  buttonColor: Colors.white,
+                                  child: RaisedButton(
+                                    onPressed: () {
+                                      changeToSeenNotification(
+                                          user, documentId);
+                                    },
+                                    child: Icon(Icons.check),
                                   ),
-                                  Text(
-                                    "Mark as read",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                    ),
+                                ),
+                                Text(
+                                  "Mark as read",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                       ],

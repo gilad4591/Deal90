@@ -87,28 +87,29 @@ class DealCreatorScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                Spacer(),
-                SizedBox(height: 20),
-                SizedBox(height: 20),
+                // Spacer(),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.1),
                 SizedBox(
-                  width: 200,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  height: MediaQuery.of(context).size.height * 0.05,
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
-                          side: BorderSide(color: Theme.of(context).buttonColor),
+                          side:
+                              BorderSide(color: Theme.of(context).buttonColor),
                         ),
                       ),
                     ),
                     onPressed: () {
                       Navigator.pushNamed(
-                          context,
-                          DealRecommendationsScreen.routeName,
-                          arguments: DealRecommendationsArgs(args.id)
-                      );
+                          context, DealRecommendationsScreen.routeName,
+                          arguments: DealRecommendationsArgs(args.id));
                     },
                     child: Text("See recommendations"),
                   ),
@@ -157,7 +158,6 @@ class SocialBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-
         padding: EdgeInsets.all(15),
         decoration: nMboxInvert,
         child: Row(
