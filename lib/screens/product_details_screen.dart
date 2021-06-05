@@ -133,7 +133,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
             SizedBox(height: 50),
             !_isloading
-                ? CreatorDetailsButton(creatorProfile: creatorProfile, loadedProduct: loadedProduct)
+                ? CreatorDetailsButton(
+                    creatorProfile: creatorProfile,
+                    loadedProduct: loadedProduct)
                 : CircularProgressIndicator(),
           ],
         ),
@@ -193,22 +195,23 @@ class CreatorDetailsButton extends StatelessWidget {
                 ),
               ),
             ),
-            onPressed: () async{
+            onPressed: () async {
               /// Send A push to the Deal's creator
               // final dealCreatorId =
               //     "d-Uej_9ZQV6dtc1RlFKn89:APA91bHgrT_kVTpVW2kUo-Uced0iplaHu3N5Y3_aBqjiM-YFSQJuRctKY_tUpOhGZYUs0f5WUrmEEAocsJqBKu9-a2ifJTha_11jTjtspU_AKsWuG147rditxi1F-QF6l7Jvi1Wmhu6p";
 
-              FirebaseDatabase.instance.reference().child('fcmTokens/${creatorProfile['id']}/tokens').once().then( (snapshot) async {
-
-                for(String id in snapshot.value) {
+              FirebaseDatabase.instance
+                  .reference()
+                  .child('fcmTokens/${creatorProfile['id']}/tokens')
+                  .once()
+                  .then((snapshot) async {
+                for (String id in snapshot.value) {
                   final dealCreatorId = id;
 
-                  var response = await SendPush.to(
-                      dealCreatorId,
+                  var response = await SendPush.to(dealCreatorId,
                       title: "A new user ordered your deal!",
                       body: "Check out who it is",
-                      imageUrl: loadedProduct.imageUrl
-                  );
+                      imageUrl: loadedProduct.imageUrl);
 
                   print(response.statusCode);
                 }
@@ -426,15 +429,25 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
     final auth = Provider.of<Auth>(context, listen: false);
     final dbGeneralRating = FirebaseFirestore.instance;
     final dbMyRating = FirebaseFirestore.instance;
+    print(creatorProfile['id']);
     await dbGeneralRating
         .collection('userRating')
         .doc(creatorProfile['id'])
         .get()
         .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.data != null) {
+      if (documentSnapshot.exists) {
         averageRating = double.parse(documentSnapshot['average']);
         sumRating = double.parse(documentSnapshot['sum']);
-        numberRaters = int.parse(documentSnapshot['numberRaters']);
+        try {
+          print(numberRaters);
+          print(numberRaters);
+
+          numberRaters = int.tryParse(documentSnapshot['numberRaters']);
+          print(numberRaters);
+          // print(documentSnapshot['numberRaters']);
+        } on Exception catch (error) {
+          print(error);
+        }
       }
     });
     if (numberRaters > 0) {
@@ -445,7 +458,7 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
           .doc(auth.userId)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
-        if (documentSnapshot.data != null) {
+        if (documentSnapshot.exists) {
           myRating = double.parse(documentSnapshot.get('rate'));
         }
       });
@@ -473,12 +486,14 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
 
     final dbGeneralRating = FirebaseFirestore.instance;
     final dbMyRating = FirebaseFirestore.instance;
+    print(creatorProfile['id']);
     await dbGeneralRating
         .collection('userRating')
         .doc(creatorProfile['id'])
         .get()
         .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.data != null) {
+      if (documentSnapshot.exists) {
+        print(documentSnapshot);
         averageRating = double.parse(documentSnapshot['average']);
         sumRating = double.parse(documentSnapshot['sum']);
         numberRaters = int.parse(documentSnapshot['numberRaters']);
@@ -492,7 +507,7 @@ class _RatingBarCreatorState extends State<RatingBarCreator> {
           .doc(auth.userId)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
-        if (documentSnapshot.data != null) {
+        if (documentSnapshot.exists) {
           oldRating = double.parse(documentSnapshot['rate']);
         }
       });
