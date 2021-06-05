@@ -1,4 +1,5 @@
 import 'package:finalproject/models/auth.dart';
+import 'package:finalproject/screens/main_screen.dart';
 import 'package:finalproject/screens/product_overview_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -165,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-      drawer: widget.fromStart!=null && widget.fromStart ? null: AppDrawer(),
+      drawer: widget.fromStart != null && widget.fromStart ? null : AppDrawer(),
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(),
@@ -305,7 +306,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             labelTextField: 'bio',
                                           ),
                                           SizedBox(
-                                            height: 20,
+                                            width: 200,
+                                            child: ElevatedButton(
+                                              style: ButtonStyle(
+                                                foregroundColor:
+                                                    MaterialStateProperty.all<
+                                                        Color>(Colors.white),
+                                                backgroundColor:
+                                                    MaterialStateProperty.all<
+                                                        Color>(Colors.blue),
+                                                shape:
+                                                    MaterialStateProperty.all<
+                                                        RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.zero,
+                                                    side: BorderSide(
+                                                        color: Theme.of(context)
+                                                            .buttonColor),
+                                                  ),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  MainScreen.routeName,
+                                                );
+                                              },
+                                              child: Text("חזור למסך הבית"),
+                                            ),
                                           ),
                                         ],
                                       ),
