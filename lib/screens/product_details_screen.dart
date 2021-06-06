@@ -211,6 +211,9 @@ class CreatorDetailsButton extends StatelessWidget {
                   var response = await SendPush.to(dealCreatorId,
                       title: "A new user ordered your deal!",
                       body: "Check out who it is",
+                      dataMap: {
+                        'type': 'user-order',
+                      },
                       imageUrl: loadedProduct.imageUrl);
 
                   print(response.statusCode);

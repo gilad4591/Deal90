@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class SendPush {
   static String baseUrl = "https://fcm.googleapis.com/fcm";
 
-  static Future<http.Response> to(String to, {String title, String body, String imageUrl}) async{
+  static Future<http.Response> to(String to, {String title, String body, String imageUrl, Map<String, dynamic> dataMap}) async{
     return http.post(
       '$baseUrl/send',
       headers: {
@@ -15,11 +15,12 @@ class SendPush {
       },
       body: jsonEncode({
         "to": to,
-        "data":{
-          "title" : title,
-          "body" : body,
+        "data": {
+          "title": title,
+          "info": dataMap,
+          "body": body,
           //"image": imageUrl,
-          "click_action": "FLUTTER_NOTIFICATION_CLICK"
+          "click_action": "FLUTTER_NOTIFICATION_CLICK",
         }
       })
     );

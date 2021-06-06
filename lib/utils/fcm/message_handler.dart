@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:finalproject/screens/order_notification_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -11,19 +9,17 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-
-
 class FCMMessage {
   final String title;
   final String body;
-  final Map<String, dynamic> data;
+  final Map data;
 
   FCMMessage({this.title, this.body, this.data});
 
   FCMMessage.fromMap(Map map)
-      : title = map['data']['title'],
-        body = map['data']['body'],
-        data = jsonDecode(map['data']['info']);
+      : title = map['notification']['title'],
+        body = map['notification']['body'],
+        data = map['data'];
 }
 
 class MessageHandler extends StatefulWidget {
@@ -38,7 +34,6 @@ class MessageHandler extends StatefulWidget {
 class _MessageHandlerState extends State<MessageHandler> {
   final FirebaseMessaging _fcm = FirebaseMessaging();
 
-
   StreamSubscription iosSubscription;
 
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -47,7 +42,7 @@ class _MessageHandlerState extends State<MessageHandler> {
   void initState() {
     super.initState();
 
-     _initLocalNotifications();
+    _initLocalNotifications();
 
     if (Platform.isIOS) {
       iosSubscription = _fcm.onIosSettingsRegistered.listen((data) {
@@ -55,58 +50,44 @@ class _MessageHandlerState extends State<MessageHandler> {
         FCMUtils.saveDeviceToken();
 
         FCMUtils.subscribeToTopics();
-
       });
 
       _fcm.requestNotificationPermissions(IosNotificationSettings());
-    }
-    else {
-
+    } else {
       FCMUtils.saveDeviceToken();
 
       FCMUtils.subscribeToTopics();
     }
 
-
     _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
-
         var msg = FCMMessage.fromMap(message);
 
         // show in background
-       _showNotificationWithDefaultSound(msg.title, msg.body, msg.data);
-
-
+        _showNotificationWithDefaultSound(msg.body, msg.body);
       },
       onLaunch: (Map<String, dynamic> message) async {
         var msg = FCMMessage.fromMap(message);
 
-
-
         // go to the right Event
-
       },
-
       onResume: (Map<String, dynamic> message) async {
         var msg = FCMMessage.fromMap(message);
 
         // go to the right Event
         print("OnResume");
-
       },
-
       onBackgroundMessage: _firebaseMessagingBackgroundHandler,
     );
   }
 
   @override
-  void dispose(){
-    if(iosSubscription != null) {
+  void dispose() {
+    if (iosSubscription != null) {
       iosSubscription.cancel();
     }
     super.dispose();
   }
-
 
   _initLocalNotifications() {
     var android = AndroidInitializationSettings('@drawable/ic_launcher');
@@ -118,20 +99,8 @@ class _MessageHandlerState extends State<MessageHandler> {
     );
   }
 
-
-  Future<void> _onSelectNotification(String payload) async{
+  Future<void> _onSelectNotification(String payload) async {
     //Navigator.push(context, );
-    int x = 9;
-    Map<String,dynamic> data = jsonDecode(payload);
-  
-    
-    if(data['type'] == 'user-order'){
-      Navigator.pushNamed(context, OrderNotificationScreen.routeName);
-
-    }
-
-
-
     return;
   }
 
@@ -141,22 +110,22 @@ class _MessageHandlerState extends State<MessageHandler> {
   }
 }
 
-Future<void> _firebaseMessagingBackgroundHandler(Map<String,dynamic> message) async {
+Future<void> _firebaseMessagingBackgroundHandler(
+    Map<String, dynamic> message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
- // await Firebase.initializeApp();
+  // await Firebase.initializeApp();
 
- var msg = FCMMessage(
-     title: message['data']['title'],
-     body: message['data']['body'],
-     data: message['data']['info'],
- );
+  var msg = FCMMessage(
+    title: message['data']['title'],
+    body: message['data']['body'],
+    data: message['data'],
+  );
 
- _showNotificationWithDefaultSound(msg.title, msg.body, msg.data);
-
+  _showNotificationWithDefaultSound(msg.title, msg.body);
 }
 
-class FCMUtils{
+class FCMUtils {
   const FCMUtils._();
 
   /// Get the token, save it to the database for current user
@@ -175,7 +144,8 @@ class FCMUtils{
 
     // Save it to Firebase Database
     if (fcmToken != null) {
-      var tokenRef = FirebaseDatabase.instance.reference().child("fcmTokens/$uid");
+      var tokenRef =
+          FirebaseDatabase.instance.reference().child("fcmTokens/$uid");
 
       await tokenRef.updateArrayUnion('tokens', [fcmToken]);
 
@@ -203,66 +173,67 @@ class FCMUtils{
 
     // Save it to Firebase Database
     if (fcmToken != null) {
-      var tokenRef = FirebaseDatabase.instance.reference().child("fcmTokens/$uid");
+      var tokenRef =
+          FirebaseDatabase.instance.reference().child("fcmTokens/$uid");
 
       await tokenRef.updateArrayRemove('tokens', [fcmToken]);
     }
   }
 
   /// Subscribe to the user's topics
-  static void subscribeToTopics() async{
+  static void subscribeToTopics() async {
     final FirebaseMessaging _fcm = FirebaseMessaging();
 
     try {
       String uid = auth.FirebaseAuth.instance.currentUser.uid;
-      var userSnapshot = await FirebaseFirestore.instance.doc('users/$uid')
-          .get();
-      List<String> topics = (userSnapshot.get('fcmTopics') ?? []).cast<
-          String>();
+      var userSnapshot =
+          await FirebaseFirestore.instance.doc('users/$uid').get();
+      List<String> topics =
+          (userSnapshot.get('fcmTopics') ?? []).cast<String>();
 
       for (var topic in topics) {
         _fcm.subscribeToTopic(topic);
       }
-    }
-    catch (e){
+    } catch (e) {
       print(e);
     }
   }
 
   /// Unsubscribe from a topic
-  static void unsubscribeFromTopic(String topic) async{
+  static void unsubscribeFromTopic(String topic) async {
     final FirebaseMessaging _fcm = FirebaseMessaging();
 
-   _fcm.unsubscribeFromTopic(topic);
+    _fcm.unsubscribeFromTopic(topic);
 
-    String uid  = auth.FirebaseAuth.instance.currentUser.uid;
-    await FirebaseFirestore.instance.doc('users/$uid')
-        .update({"fcmTopics": FieldValue.arrayRemove([topic])});
-
+    String uid = auth.FirebaseAuth.instance.currentUser.uid;
+    await FirebaseFirestore.instance.doc('users/$uid').update({
+      "fcmTopics": FieldValue.arrayRemove([topic])
+    });
   }
 
   /// subscribe from a topic
-  static void subscribeToTopic(String topic) async{
+  static void subscribeToTopic(String topic) async {
     final FirebaseMessaging _fcm = FirebaseMessaging();
 
-   _fcm.subscribeToTopic(topic);
+    _fcm.subscribeToTopic(topic);
 
-    String uid  = auth.FirebaseAuth.instance.currentUser.uid;
-    await FirebaseFirestore.instance.doc('users/$uid')
-        .update({"fcmTopics": FieldValue.arrayUnion([topic])});
-
+    String uid = auth.FirebaseAuth.instance.currentUser.uid;
+    await FirebaseFirestore.instance.doc('users/$uid').update({
+      "fcmTopics": FieldValue.arrayUnion([topic])
+    });
   }
 }
+
 //
 //
-Future _showNotificationWithDefaultSound(String title, String message, Map<String,dynamic> info) async {
+Future _showNotificationWithDefaultSound(String title, String message) async {
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'abc', 'channel_name', 'channel_description',
       largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
-
-      importance: Importance.max, priority: Priority.high);
+      importance: Importance.max,
+      priority: Priority.high);
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
   var platformChannelSpecifics = NotificationDetails(
     android: androidPlatformChannelSpecifics,
@@ -274,52 +245,44 @@ Future _showNotificationWithDefaultSound(String title, String message, Map<Strin
     title,
     message,
     platformChannelSpecifics,
-    payload: jsonEncode(info),
+    payload: 'Default_Sound',
   );
 }
 
-
-
-extension DatabaseReferenceExtension on DatabaseReference{
-  updateArrayRemove(String fieldPath, List elements) async{
+extension DatabaseReferenceExtension on DatabaseReference {
+  updateArrayRemove(String fieldPath, List elements) async {
     List list = [];
 
     var snapshot = await this.child(fieldPath).once();
 
-    if (snapshot.value != null){
+    if (snapshot.value != null) {
       if (!(snapshot.value is List)) {
         return;
-      }
-      else {
+      } else {
         list.addAll(snapshot.value as List);
       }
     }
 
     list.removeWhere((el) => elements.contains(el));
 
-    this.update({
-      fieldPath: list
-    });
+    this.update({fieldPath: list});
   }
 
-  updateArrayUnion(String fieldPath, List elements) async{
+  updateArrayUnion(String fieldPath, List elements) async {
     List list = [];
 
     var snapshot = await this.child(fieldPath).once();
 
-    if (snapshot.value != null){
+    if (snapshot.value != null) {
       if (!(snapshot.value is List)) {
         return;
-      }
-      else {
+      } else {
         list.addAll(snapshot.value as List);
       }
     }
 
     list.addAll(elements);
 
-    this.update({
-      fieldPath: list.toSet().toList()
-    });
+    this.update({fieldPath: list.toSet().toList()});
   }
 }
