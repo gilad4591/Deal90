@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finalproject/screens/order_notification_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -14,14 +16,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class FCMMessage {
   final String title;
   final String body;
-  final Map data;
+  final Map<String, dynamic> data;
 
   FCMMessage({this.title, this.body, this.data});
 
   FCMMessage.fromMap(Map map)
-      : title = map['notification']['title'],
-        body = map['notification']['body'],
-        data = map['data'];
+      : title = map['data']['title'],
+        body = map['data']['body'],
+        data = jsonDecode(map['data']['info']);
 }
 
 class MessageHandler extends StatefulWidget {
@@ -72,7 +74,7 @@ class _MessageHandlerState extends State<MessageHandler> {
         var msg = FCMMessage.fromMap(message);
 
         // show in background
-       _showNotificationWithDefaultSound(msg.body, msg.body);
+       _showNotificationWithDefaultSound(msg.title, msg.body, msg.data);
 
 
       },
@@ -107,7 +109,7 @@ class _MessageHandlerState extends State<MessageHandler> {
 
 
   _initLocalNotifications() {
-    var android = AndroidInitializationSettings('@drawable/ic_notification');
+    var android = AndroidInitializationSettings('@drawable/ic_launcher');
     var iOS = IOSInitializationSettings();
     var initSettings = InitializationSettings(android: android, iOS: iOS);
     flutterLocalNotificationsPlugin.initialize(
@@ -119,6 +121,17 @@ class _MessageHandlerState extends State<MessageHandler> {
 
   Future<void> _onSelectNotification(String payload) async{
     //Navigator.push(context, );
+    int x = 9;
+    Map<String,dynamic> data = jsonDecode(payload);
+  
+    
+    if(data['type'] == 'user-order'){
+      Navigator.pushNamed(context, OrderNotificationScreen.routeName);
+
+    }
+
+
+
     return;
   }
 
@@ -136,10 +149,10 @@ Future<void> _firebaseMessagingBackgroundHandler(Map<String,dynamic> message) as
  var msg = FCMMessage(
      title: message['data']['title'],
      body: message['data']['body'],
-     data: message['data'],
+     data: message['data']['info'],
  );
 
- _showNotificationWithDefaultSound(msg.title, msg.body);
+ _showNotificationWithDefaultSound(msg.title, msg.body, msg.data);
 
 }
 
@@ -242,7 +255,7 @@ class FCMUtils{
 }
 //
 //
-Future _showNotificationWithDefaultSound(String title, String message) async {
+Future _showNotificationWithDefaultSound(String title, String message, Map<String,dynamic> info) async {
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -261,7 +274,7 @@ Future _showNotificationWithDefaultSound(String title, String message) async {
     title,
     message,
     platformChannelSpecifics,
-    payload: 'Default_Sound',
+    payload: jsonEncode(info),
   );
 }
 
