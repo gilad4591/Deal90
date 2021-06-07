@@ -25,6 +25,7 @@ class Notifications extends StatelessWidget {
                 .collection('ordernotification')
                 .doc(user.userId)
                 .collection('Notifications')
+                .orderBy('seen')
                 .snapshots(),
             builder: (context, notificationSnapshot) {
               if (notificationSnapshot.connectionState ==
