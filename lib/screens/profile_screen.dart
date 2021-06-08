@@ -96,7 +96,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> readData() async {
     final auth = Provider.of<Auth>(context, listen: false);
     final db = FirebaseFirestore.instance;
-    if (auth.token != null) {
+
+    if (auth.userId != null) {
       await db.collection('users').doc(auth.userId).get().then(
         (DocumentSnapshot documentSnapshot) {
           currentLoggedInProfile.update('city', (v) {

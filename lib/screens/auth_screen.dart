@@ -184,20 +184,21 @@ class _AuthCardState extends State<AuthCard>
         );
         final auth = Provider.of<Auth>(context, listen: false);
 
-        // await FirebaseFirestore.instance
-        //     .collection('users')
-        //     .doc(auth.userId)
-        //     .set({
-        //   'email': _authData['email'],
-        //   'city': ' ',
-        //   'date': ' ',
-        //   'phone': ' ',
-        //   'name': ' ',
-        //   'instagram_url': ' ',
-        //   'facebook_url': ' ',
-        //   'profileImageURL':
-        //       'https://firebasestorage.googleapis.com/v0/b/finalproject-52a7e.appspot.com/o/user_image%2Fdefimage.jpg?alt=media&token=937de49b-8e2b-40f4-93aa-158f29c833e2',
-        // });
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(auth.userId)
+            .set({
+          'bio': '',
+          'email': _authData['email'],
+          'city': '',
+          'date': '',
+          'phone': '',
+          'name': '',
+          'instagram_url': '',
+          'facebook_url': '',
+          'profileImageURL':
+              'https://firebasestorage.googleapis.com/v0/b/finalproject-52a7e.appspot.com/o/user_image%2Fdefimage.jpg?alt=media&token=937de49b-8e2b-40f4-93aa-158f29c833e2',
+        });
       }
     } on FirebaseAuthException catch (error) {
       var errorMessage = error.message;
@@ -218,26 +219,6 @@ class _AuthCardState extends State<AuthCard>
           'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
     }
-
-    // } on HttpException catch (error) {
-    //   var errorMessage = 'Authentication failed';
-    //   if (error.toString().contains('EMAIL_EXISTS')) {
-    //     errorMessage = 'This email address is already in use.';
-    //   } else if (error.toString().contains('INVALID_EMAIL')) {
-    //     errorMessage = 'This is not a valid email address';
-    //   } else if (error.toString().contains('WEAK_PASSWORD')) {
-    //     errorMessage = 'This password is too weak.';
-    //   } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-    //     errorMessage = 'Could not find a user with that email.';
-    //   } else if (error.toString().contains('INVALID_PASSWORD')) {
-    //     errorMessage = 'Invalid password.';
-    //   }
-    //   _showErrorDialog(errorMessage);
-    // } catch (error) {
-    //   const errorMessage =
-    //       'Could not authenticate you. Please try again later.';
-    //   _showErrorDialog(errorMessage);
-    // }
 
     setState(() {
       _isLoading = false;
