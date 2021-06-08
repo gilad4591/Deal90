@@ -17,8 +17,8 @@ class FCMMessage {
   FCMMessage({this.title, this.body, this.data});
 
   FCMMessage.fromMap(Map map)
-      : title = map['notification']['title'],
-        body = map['notification']['body'],
+      : title = map['data']['title'],
+        body = map['data']['body'],
         data = map['data'];
 }
 
